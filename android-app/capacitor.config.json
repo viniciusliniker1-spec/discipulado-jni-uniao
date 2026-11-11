@@ -1,0 +1,10 @@
+{
+  "appId": "br.org.jniuniao.discipulado",
+  "appName": "Discipulado JNI",
+  "webDir": "www",
+  "server": {
+    "url": "https://viniciusliniker1-spec.github.io/discipulado-jni-uniao/",
+    "cleartext": false,
+    "androidScheme": "https"
+  }
+}
