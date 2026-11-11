@@ -138,3 +138,9 @@ select{border:1px solid var(--line);border-radius:10px;padding:8px 10px;backgrou
  .blocks{grid-template-columns:1fr}
  .who .nome{display:none}
 }
+
+/* linha do tempo semanal de atividade */
+.semanas{display:flex;align-items:flex-end;gap:6px;height:56px}
+.semanas i{flex:1;background:var(--cy);border-radius:4px;min-width:8px}
+.semanas i.zero{background:#c9d2ea}
+.tabs.modo{margin-bottom:18px}

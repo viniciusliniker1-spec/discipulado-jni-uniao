@@ -7,7 +7,8 @@ const crypto = require('crypto');
 
 const PORT = process.env.PORT || 3000;
 const BASE_URL = process.env.BASE_URL || ('http://localhost:' + PORT);
-const INVITE_CODE = process.env.INVITE_CODE || '';          // código que o ADM fornece ao discipulador
+const INVITE_CODE = process.env.INVITE_CODE || 'JNIconexao';    // código para criar conta de discipulador (troque em produção)
+const ACCESS_CODE = process.env.ACCESS_CODE || 'JNIconexao';    // código que o ADM digita para acessar as duas versões
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || '').toLowerCase();
 const GOOGLE_ID = process.env.GOOGLE_CLIENT_ID || '';        // configurar depois
 const GOOGLE_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
@@ -25,7 +26,7 @@ if (!ADMIN_EMAIL) console.warn('[aviso] ADMIN_EMAIL não definido: ninguém ter�
 // notas: discipuladorId -> alunoId -> {n: {...}}                       (privado do discipulador)
 // depois: alunoId -> {m,c,a}
 // atividade: alunoId -> ["AAAA-MM-DD", ...] (dias em que o aluno registrou algo; usado nos relatórios)
-let db = { users: {}, sessions: {}, assign: {}, progress: {}, notas: {}, depois: {}, atividade: {} };
+let db = { users: {}, sessions: {}, assign: {}, progress: {}, notas: {}, depois: {}, atividade: {}, atividadeNotas: {} };
 try { db = Object.assign(db, JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))); } catch (e) { /* primeiro uso */ }
 function persist() {
   fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
@@ -88,12 +89,27 @@ function sanitizarEncontro(e) {
 function sanitizarNota(e) {
   return { percepcoes: texto(e && e.percepcoes, 3000), compromisso: texto(e && e.compromisso, 3000), acompanhamento: texto(e && e.acompanhamento, 3000), anotacoes: texto(e && e.anotacoes, 3000) };
 }
-function registrarAtividade(uid) {
+function registrarAtividade(uid, mapa = 'atividade') {
   const d = new Date().toISOString().slice(0, 10);
-  const a = db.atividade[uid] || [];
+  db[mapa] = db[mapa] || {};
+  const a = db[mapa][uid] || [];
   if (!a.includes(d)) a.push(d);
-  db.atividade[uid] = a.slice(-90);
+  db[mapa][uid] = a.slice(-90);
 }
+// Quantos dias com atividade em cada uma das últimas 8 semanas (semana 0 = últimos 7 dias)
+function semanasAtividade(uid, mapa = 'atividade') {
+  const dias = db[mapa] && db[mapa][uid] || [];
+  const out = [0, 0, 0, 0, 0, 0, 0, 0];
+  const hoje = Date.now();
+  dias.forEach(d => {
+    const idade = Math.floor((hoje - new Date(d).getTime()) / 864e5);
+    if (idade >= 0 && idade < 56) out[Math.floor(idade / 7)]++;
+  });
+  return out.reverse(); // mais antiga primeiro
+}
+// Permissões: discípulo (aluno), discipulador, e administrador com acesso completo (código ACCESS_CODE)
+function podeCurso(u) { return !!u && (u.papel === 'aluno' || u.papel === 'discipulador' || (u.papel === 'admin' && u.duplo)); }
+function podeConduzir(u) { return !!u && (u.papel === 'discipulador' || (u.papel === 'admin' && u.duplo)); }
 // Métricas de atividade: só números e datas, nunca respostas ou registro
 function metricasAluno(alunoId) {
   const prog = db.progress[alunoId] || {};
@@ -118,7 +134,7 @@ function metricasAluno(alunoId) {
     encontros.push(r);
   }
   const ultima = (db.atividade[alunoId] || []).slice(-1)[0] || null;
-  return { ultimaAtividade: ultima, diasAtivos7: dias7.size, concluidos, dias, respostas, registros, encontros };
+  return { ultimaAtividade: ultima, diasAtivos7: dias7.size, concluidos, dias, respostas, registros, encontros, semanas: semanasAtividade(alunoId) };
 }
 function notasPreenchidas(discId, alunoId) {
   const n = (db.notas[discId] || {})[alunoId] || {};
@@ -172,7 +188,7 @@ async function api(req, res, url) {
 
   if (p === '/api/me' && m === 'GET') {
     if (!user) return enviar(res, 401, { erro: 'não autenticado' });
-    const info = { usuario: publico(user) };
+    const info = { usuario: publico(user), capacidades: { curso: podeCurso(user), conduzir: podeConduzir(user), admin: user.papel === 'admin' } };
     if (user.papel === 'aluno') {
       const dId = db.assign[user.id];
       info.discipulador = dId && db.users[dId] ? publico(db.users[dId]) : null;
@@ -182,11 +198,23 @@ async function api(req, res, url) {
 
   if (!user) return enviar(res, 401, { erro: 'Entre na sua conta para continuar.' });
 
+  // Ativação do acesso completo pelo administrador (código ACCESS_CODE)
+  if (p === '/api/ativar-acesso' && m === 'POST') {
+    if (user.papel !== 'admin') return enviar(res, 403, { erro: 'Somente o administrador.' });
+    const b = await lerCorpo(req);
+    if (texto(b.codigo, 100) !== ACCESS_CODE) return enviar(res, 403, { erro: 'Código inválido.' });
+    user.duplo = true; persist();
+    return enviar(res, 200, { ok: true, capacidades: { curso: true, conduzir: true, admin: true } });
+  }
+
   // Aluno: o próprio progresso
-  if (p === '/api/meu-progresso' && m === 'GET') return enviar(res, 200, db.progress[user.id] || {});
+  if (p === '/api/meu-progresso' && m === 'GET') {
+    if (!podeCurso(user)) return enviar(res, 403, { erro: 'Sem acesso ao curso nesta conta.' });
+    return enviar(res, 200, db.progress[user.id] || {});
+  }
   const mp = p.match(/^\/api\/meu-progresso\/(\d+)$/);
   if (mp && m === 'PUT') {
-    if (user.papel !== 'aluno') return enviar(res, 403, { erro: 'Somente alunos preenchem o próprio registro.' });
+    if (!podeCurso(user)) return enviar(res, 403, { erro: 'Sem acesso ao curso nesta conta.' });
     const n = +mp[1]; if (n < 1 || n > 10) return enviar(res, 400, { erro: 'encontro inválido' });
     const b = await lerCorpo(req);
     db.progress[user.id] = db.progress[user.id] || {};
@@ -196,8 +224,9 @@ async function api(req, res, url) {
     return enviar(res, 200, { ok: true });
   }
 
-  if (p === '/api/meu-depois' && m === 'GET') return enviar(res, 200, db.depois[user.id] || { m: '', c: '', a: '' });
+  if (p === '/api/meu-depois' && m === 'GET') { if (!podeCurso(user)) return enviar(res, 403, { erro: 'Sem acesso.' }); return enviar(res, 200, db.depois[user.id] || { m: '', c: '', a: '' }); }
   if (p === '/api/meu-depois' && m === 'PUT') {
+    if (!podeCurso(user)) return enviar(res, 403, { erro: 'Sem acesso.' });
     const b = await lerCorpo(req);
     db.depois[user.id] = { m: texto(b.m), c: texto(b.c), a: texto(b.a) };
     registrarAtividade(user.id); persist();
@@ -206,7 +235,7 @@ async function api(req, res, url) {
 
   // Discipulador: lista dos seus discípulos
   if (p === '/api/meus-discipulos' && m === 'GET') {
-    if (user.papel !== 'discipulador') return enviar(res, 403, { erro: 'Apenas discipuladores.' });
+    if (!podeConduzir(user)) return enviar(res, 403, { erro: 'Apenas discipuladores.' });
     return enviar(res, 200, { discipulos: discipulosDe(user.id) });
   }
 
@@ -220,7 +249,7 @@ async function api(req, res, url) {
   // Notas privadas do discipulador sobre um aluno seu
   const mnotas = p.match(/^\/api\/discipulo\/([a-f0-9]+)\/notas\/(\d+)$/);
   if (mnotas) {
-    if (user.papel !== 'discipulador' || db.assign[mnotas[1]] !== user.id) return enviar(res, 403, { erro: 'Notas privadas do discipulador.' });
+    if (!podeConduzir(user) || db.assign[mnotas[1]] !== user.id) return enviar(res, 403, { erro: 'Notas privadas do discipulador.' });
     const n = +mnotas[2];
     if (m === 'GET') return enviar(res, 200, ((db.notas[user.id] || {})[mnotas[1]] || {})[n] || sanitizarNota({}));
     if (m === 'PUT') {
@@ -228,6 +257,7 @@ async function api(req, res, url) {
       db.notas[user.id] = db.notas[user.id] || {};
       db.notas[user.id][mnotas[1]] = db.notas[user.id][mnotas[1]] || {};
       db.notas[user.id][mnotas[1]][n] = sanitizarNota(b);
+      registrarAtividade(user.id, 'atividadeNotas');
       persist();
       return enviar(res, 200, { ok: true });
     }
@@ -235,12 +265,13 @@ async function api(req, res, url) {
 
   // Relatório do discipulador: atividades dos seus discípulos (registro completo, pois ele é designado)
   if (p === '/api/relatorio/discipulador' && m === 'GET') {
-    if (user.papel !== 'discipulador') return enviar(res, 403, { erro: 'Apenas discipuladores.' });
+    if (!podeConduzir(user)) return enviar(res, 403, { erro: 'Apenas discipuladores.' });
     const discipulos = discipulosDe(user.id).map(d => {
       const met = metricasAluno(d.id);
       return { ...d, ...met, notas: notasPreenchidas(user.id, d.id) };
     });
-    return enviar(res, 200, { discipulos });
+    const minhasNotas = { ultimaAtividade: ((db.atividadeNotas || {})[user.id] || []).slice(-1)[0] || null, semanas: semanasAtividade(user.id, 'atividadeNotas') };
+    return enviar(res, 200, { discipulos, minhasNotas });
   }
 
   // Relatório do administrador: só números e datas, sem respostas nem registro
@@ -249,7 +280,7 @@ async function api(req, res, url) {
     const alunos = Object.values(db.users).filter(u => u.papel === 'aluno').map(u => {
       const d = db.assign[u.id] ? db.users[db.assign[u.id]] : null;
       const { encontros, ...met } = metricasAluno(u.id);
-      return { id: u.id, nome: u.nome, email: u.email, discipulador: d ? d.nome : null, ...met };
+      return { id: u.id, nome: u.nome, email: u.email, discipulador: d ? d.nome : null, ...met, semanas: met.semanas };
     });
     const discipuladores = Object.values(db.users).filter(u => u.papel === 'discipulador').map(d => {
       const meus = alunos.filter(a => a.discipulador === d.nome);
@@ -324,7 +355,7 @@ async function googleCallback(req, res, url) {
 }
 
 /* ---------- arquivos estáticos e roteamento ---------- */
-const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'application/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon' };
+const MIME = { '.webmanifest': 'application/manifest+json; charset=utf-8', '.html': 'text/html; charset=utf-8', '.js': 'application/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon' };
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, BASE_URL);

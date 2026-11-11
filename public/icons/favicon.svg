@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#ffffff"/>
+  <g transform="translate(141,44) scale(3.6)" fill="#000000" stroke="#000000" stroke-width="1.2" stroke-linejoin="round">
+    <path d="M6 30 32 6l26 24v8L32 14 6 38z"/>
+    <path d="M6 54 32 30l26 24v8L32 38 6 62z"/>
+  </g>
+  <text x="256" y="430" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-weight="700" font-size="74" fill="#000000" textLength="396" lengthAdjust="spacingAndGlyphs">DISCIPULADO</text>
+</svg>

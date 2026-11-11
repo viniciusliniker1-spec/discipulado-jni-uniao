@@ -6,7 +6,8 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&a
 const CHEV = '<svg class="chev" viewBox="0 0 64 64" aria-hidden="true"><path d="M6 30 32 6l26 24v8L32 14 6 38z" fill="currentColor" stroke="#0b1020" stroke-width="3" stroke-linejoin="round"/><path d="M6 54 32 30l26 24v8L32 38 6 62z" fill="currentColor" stroke="#0b1020" stroke-width="3" stroke-linejoin="round"/></svg>';
 const PAPEL = { aluno: 'Discípulo', discipulador: 'Discipulador', admin: 'Administração' };
 
-const S = { me: null, discipulador: null, prog: {}, depois: null, discipulos: [], cfg: {}, authTab: 'entrar', papelCad: 'aluno', codigoCad: '', alunoProg: {}, notas: {}, usuarios: [] };
+const S = { me: null, discipulador: null, prog: {}, depois: null, discipulos: [], cfg: {}, authTab: 'entrar', papelCad: 'aluno', codigoCad: '', alunoProg: {}, notas: {}, usuarios: [], caps: {}, modo: null, progOk: false };
+const MODOS = { aluno: 'Discípulo', discipulador: 'Discipulador', admin: 'Administração' };
 const DEF = () => ({ bal: [false, false, false], txt: [false, false, false], perg: {}, dias: [false, false, false, false, false], reg: [['', '', '', ''], ['', '', '', ''], ['', '', '', ''], ['', '', '', ''], ['', '', '', '']], quiz: -1, comp: '', done: false });
 const encOf = (src, n) => Object.assign(DEF(), (src && src[n]) || {});
 const timers = {};
@@ -27,11 +28,36 @@ function debounceSave(key, fn, ms = 500) { clearTimeout(timers[key]); timers[key
 
 /* ---------- carregamento ---------- */
 async function carregarMe() {
+  S.progOk = false; S.prog = {};
   try {
     const me = await api('/api/me');
-    S.me = me.usuario; S.discipulador = me.discipulador || null;
-  } catch (e) { S.me = null; }
-  if (S.me && S.me.papel === 'aluno') S.prog = await api('/api/meu-progresso').catch(() => ({}));
+    S.me = me.usuario; S.discipulador = me.discipulador || null; S.caps = me.capacidades || {};
+  } catch (e) { S.me = null; S.caps = {}; }
+}
+// Modos disponíveis conforme a conta: discípulo (curso), discipulador (conduzir) e administração
+function modosDisponiveis() {
+  if (!S.me) return [];
+  const m = [];
+  if (S.caps.curso) m.push('aluno');
+  if (S.caps.conduzir) m.push('discipulador');
+  if (S.caps.admin) m.push('admin');
+  return m;
+}
+function papelAtivo() {
+  const m = modosDisponiveis();
+  if (!m.length) return null;
+  if (S.modo && m.includes(S.modo)) return S.modo;
+  if (S.me.papel === 'admin') return 'admin';
+  return m.includes('discipulador') ? 'discipulador' : m[0];
+}
+function modoBar(P) {
+  return '<div class="tabs modo">' + modosDisponiveis().map(m => '<button class="' + (m === P ? 'on' : '') + '" data-act="modo" data-v="' + m + '">' + MODOS[m] + '</button>').join('') + '</div>';
+}
+function semanasHTML(arr) {
+  const s = arr || [0, 0, 0, 0, 0, 0, 0, 0];
+  return '<div class="semanas" role="img" aria-label="Dias ativos nas últimas 8 semanas">' + s.map((v, i) =>
+    '<i class="' + (v ? '' : 'zero') + '" style="height:' + (4 + Math.round(v / 7 * 48)) + 'px" title="Semana ' + (i + 1) + ': ' + v + ' dia(s)"></i>').join('')
+    + '</div><p class="note" style="margin:2px 0 0;font-size:12px">Dias ativos nas últimas 8 semanas (a barra da direita é a mais recente; máximo 7 por semana).</p>';
 }
 async function carregarAluno(id) {
   S.alunoProg = await api('/api/aluno/' + id + '/progresso').catch(() => ({}));
@@ -41,39 +67,43 @@ async function carregarAluno(id) {
 async function route(keep) {
   const y = window.scrollY;
   const h = (location.hash || '#home').slice(1);
+  const P = papelAtivo();
   let html = '', side = '';
   try {
-    if (S.me && S.me.papel === 'discipulador' && !S.discipulos.length) {
+    if (P === 'aluno' && !S.progOk) { S.prog = await api('/api/meu-progresso').catch(() => ({})); S.progOk = true; }
+    if (P === 'discipulador' && !S.discipulos.length) {
       S.discipulos = (await api('/api/meus-discipulos').catch(() => ({ discipulos: [] }))).discipulos;
     }
     if (!S.me) {
       html = viewLogin(h);
-    } else if (S.me.papel === 'admin') {
+    } else if (P === 'admin') {
       html = await viewAdmin(); side = sideAdmin();
     } else if (/^enc-\d+$/.test(h)) {
       const n = +h.slice(4);
-      if (n >= 1 && n <= 10) { html = S.me.papel === 'aluno' ? viewEncAluno(n) : viewEncDisc(n); side = sideAluno('enc-' + n); if (S.me.papel === 'discipulador') side = sideDisc(h); }
-    } else if (/^d-[a-f0-9]+-\d+$/.test(h)) {
+      if (n >= 1 && n <= 10) {
+        if (P === 'aluno') { html = viewEncAluno(n); side = sideAluno('enc-' + n); }
+        else { html = viewEncDisc(n); side = sideDisc(h); }
+      }
+    } else if (/^d-[a-f0-9]+-\d+$/.test(h) && P === 'discipulador') {
       const [, id, n] = h.match(/^d-([a-f0-9]+)-(\d+)$/);
       await carregarAluno(id);
       S.notas[id + '-' + n] = await api('/api/discipulo/' + id + '/notas/' + n).catch(() => ({}));
       html = viewDiscAluno(id, +n); side = sideDisc(h);
-    } else if (/^d-[a-f0-9]+$/.test(h)) {
+    } else if (/^d-[a-f0-9]+$/.test(h) && P === 'discipulador') {
       const id = h.slice(2);
       await carregarAluno(id);
       html = viewDiscAlunoOverview(id); side = sideDisc(h);
-    } else if (h === 'relatorio' && S.me.papel === 'discipulador') {
+    } else if (h === 'relatorio' && P === 'discipulador') {
       html = await viewRelatorioDisc(); side = sideDisc(h);
-    } else if (h === 'avaliacao' && S.me.papel === 'discipulador') {
+    } else if (h === 'avaliacao' && P === 'discipulador') {
       html = viewAval(); side = sideDisc(h);
-    } else if (h === 'depois') {
-      if (S.me.papel === 'aluno') { S.depois = await api('/api/meu-depois').catch(() => ({ m: '', c: '', a: '' })); html = viewDepois(); }
-      else html = '<div class="warn"><b>Esta página é do discípulo.</b></div>';
-      side = sideAluno('depois');
+    } else if (h === 'depois' && P === 'aluno') {
+      S.depois = await api('/api/meu-depois').catch(() => ({ m: '', c: '', a: '' })); html = viewDepois(); side = sideAluno('depois');
     } else {
-      html = S.me.papel === 'aluno' ? viewHomeAluno() : await viewHomeDisc();
-      side = S.me.papel === 'aluno' ? sideAluno('home') : sideDisc('home');
+      html = P === 'aluno' ? viewHomeAluno() : await viewHomeDisc();
+      side = P === 'aluno' ? sideAluno('home') : sideDisc('home');
     }
+    if (S.me && modosDisponiveis().length > 1) html = modoBar(P) + html;
   } catch (e) {
     html = '<div class="erro">' + esc(e.message) + '</div>';
   }
@@ -82,7 +112,7 @@ async function route(keep) {
   $('#side').style.display = S.me ? '' : 'none';
   $('#layout').style.gridTemplateColumns = S.me ? '' : '1fr';
   $('#who').innerHTML = S.me
-    ? '<b class="nome">' + esc(S.me.nome) + '</b><span class="papel">' + PAPEL[S.me.papel] + '</span><button class="btn ghost" data-act="sair">Sair</button>'
+    ? '<b class="nome">' + esc(S.me.nome) + '</b><span class="papel">' + PAPEL[P || S.me.papel] + '</span><button class="btn ghost" data-act="sair">Sair</button>'
     : '';
   if (keep) window.scrollTo(0, y); else window.scrollTo(0, 0);
 }
@@ -400,10 +430,14 @@ function matrizEncontros(encontros) {
 async function viewRelatorioDisc() {
   const r = await api('/api/relatorio/discipulador');
   S.discipulos = r.discipulos;
-  if (!r.discipulos.length) return '<div class="sec">' + CHEV + '<h2>Relatórios</h2></div><div class="card">Nenhum discípulo designado ainda.</div>';
+  const minhas = r.minhasNotas || {};
+  const bloco = '<div class="card"><b>Suas anotações nos discípulos</b><p class="note" style="margin:4px 0 8px">Última vez que você salvou notas: ' + dataBR(minhas.ultimaAtividade) + '</p>' + semanasHTML(minhas.semanas) + '</div>';
+  if (!r.discipulos.length) return '<div class="sec">' + CHEV + '<h2>Relatórios</h2></div>' + bloco + '<div class="card">Nenhum discípulo designado ainda.</div>';
   const linhas = r.discipulos.map(d => '<tr><td><a href="#d-' + d.id + '" style="font-weight:700">' + esc(d.nome) + '</a></td><td>' + statusAtividade(d.ultimaAtividade, d.diasAtivos7) + '<br><small class="note">última: ' + dataBR(d.ultimaAtividade) + '</small></td><td>' + barraProg(d.concluidos) + '</td><td>' + d.dias + '/50</td><td>' + d.respostas + '</td><td>' + d.registros + '</td><td>' + d.notas + '</td></tr>').join('');
-  const detalhes = r.discipulos.map(d => '<div class="card"><b>' + esc(d.nome) + '</b> <span class="note">· ' + (d.diasAtivos7 ? d.diasAtivos7 + ' dia(s) ativo(s) nos últimos 7' : 'nenhuma atividade nos últimos 7 dias') + '</span>' + matrizEncontros(d.encontros) + '</div>').join('');
+  const detalhes = r.discipulos.map(d => '<div class="card"><b>' + esc(d.nome) + '</b> <span class="note">· ' + (d.diasAtivos7 ? d.diasAtivos7 + ' dia(s) ativo(s) nos últimos 7' : 'nenhuma atividade nos últimos 7 dias') + '</span>' + matrizEncontros(d.encontros) + '<div style="margin-top:12px">' + semanasHTML(d.semanas) + '</div></div>').join('');
   return `
+  <div class="sec">${CHEV}<h2>Relatórios</h2></div>
+  ${bloco}
   <div class="sec">${CHEV}<h2>Relatórios dos discípulos</h2></div>
   <div class="card" style="padding:8px"><table><thead><tr><th>Discípulo</th><th>Atividade</th><th>Encontros</th><th>Dias do desafio</th><th>Respostas</th><th>Registros</th><th>Notas suas</th></tr></thead><tbody>${linhas}</tbody></table></div>
   <div class="sec">${CHEV}<h2>Encontro a encontro</h2></div>
@@ -412,12 +446,12 @@ async function viewRelatorioDisc() {
 async function relatorioAdminHTML() {
   const r = await api('/api/relatorio/admin');
   const disc = r.discipuladores.length ? r.discipuladores.map(d => '<tr><td>' + esc(d.nome) + '</td><td>' + d.discipulos + '</td><td>' + d.mediaConcluidos + '/10</td><td>' + d.semAtividade7 + '</td></tr>').join('') : '<tr><td colspan="4">Nenhum discipulador ainda.</td></tr>';
-  const al = r.alunos.length ? r.alunos.map(a => '<tr><td>' + esc(a.nome) + '</td><td>' + esc(a.discipulador || '—') + '</td><td>' + statusAtividade(a.ultimaAtividade, a.diasAtivos7) + '<br><small class="note">última: ' + dataBR(a.ultimaAtividade) + '</small></td><td>' + barraProg(a.concluidos) + '</td><td>' + a.dias + '/50</td></tr>').join('') : '<tr><td colspan="5">Nenhum discípulo ainda.</td></tr>';
+  const al = r.alunos.length ? r.alunos.map(a => '<tr><td>' + esc(a.nome) + '</td><td>' + esc(a.discipulador || '—') + '</td><td>' + statusAtividade(a.ultimaAtividade, a.diasAtivos7) + '<br><small class="note">última: ' + dataBR(a.ultimaAtividade) + '</small></td><td>' + barraProg(a.concluidos) + '</td><td>' + a.dias + '/50</td><td style="min-width:150px">' + semanasHTML(a.semanas) + '</td></tr>').join('') : '<tr><td colspan="6">Nenhum discípulo ainda.</td></tr>';
   return `
   <div class="sec">${CHEV}<h2>Relatório por discipulador</h2></div>
   <div class="card" style="padding:8px"><table><thead><tr><th>Discipulador</th><th>Discípulos</th><th>Média de encontros</th><th>Sem atividade (7 dias)</th></tr></thead><tbody>${disc}</tbody></table></div>
   <div class="sec">${CHEV}<h2>Relatório por discípulo</h2></div>
-  <div class="card" style="padding:8px"><table><thead><tr><th>Discípulo</th><th>Discipulador</th><th>Atividade</th><th>Encontros</th><th>Dias do desafio</th></tr></thead><tbody>${al}</tbody></table></div>
+  <div class="card" style="padding:8px"><table><thead><tr><th>Discípulo</th><th>Discipulador</th><th>Atividade</th><th>Encontros</th><th>Dias do desafio</th><th>Últimas 8 semanas</th></tr></thead><tbody>${al}</tbody></table></div>
   <p class="note">O relatório mostra só números e datas. Respostas e registros não aparecem para o administrador.</p>`;
 }
 async function viewAdmin() {
@@ -432,8 +466,10 @@ async function viewAdmin() {
     const conc = u.papel === 'aluno' ? (u.concluidos.length ? u.concluidos.join(', ') + ' (' + u.concluidos.length + '/10)' : 'nenhum ainda') : '—';
     return '<tr><td>' + esc(u.nome) + '</td><td>' + esc(u.email) + '</td><td>' + PAPEL[u.papel] + '</td><td>' + sel + '</td><td>' + conc + '</td></tr>';
   }).join('');
+  const acesso = S.caps.curso ? '' : `<div class="card"><h3 style="margin-top:0">Liberar versão completa</h3><p class="note" style="margin-top:0">Digite o código de acesso para usar também as funções de discípulo e discipulador nesta conta.</p><div class="field"><label for="codAcesso">Código de acesso</label><input id="codAcesso" type="text" autocomplete="off"></div><button class="btn or" data-act="ativar">Liberar acesso</button></div>`;
   return `
   <div class="sec">${CHEV}<h2>Administração</h2></div>
+  ${acesso}
   <div class="card"><p style="margin:0">Aqui você designa um discipulador para cada discípulo e vê quais encontros cada um já concluiu. Respostas, registro e notas não aparecem aqui.</p>
   <div style="margin-top:12px"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Discipulador designado</th><th>Encontros concluídos</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum usuário ainda.</td></tr>'}</tbody></table></div></div>
   ${relatorio}`;
@@ -453,7 +489,14 @@ document.addEventListener('click', async ev => {
   const el = ev.target.closest('[data-act]');
   if (!el) return;
   const a = el.dataset.act;
-  if (a === 'sair') { await api('/api/logout', { method: 'POST' }).catch(() => {}); S.me = null; S.discipulador = null; S.prog = {}; location.hash = '#login'; route(false); return; }
+  if (a === 'sair') { await api('/api/logout', { method: 'POST' }).catch(() => {}); S.me = null; S.discipulador = null; S.prog = {}; S.progOk = false; S.caps = {}; S.discipulos = []; location.hash = '#login'; route(false); return; }
+  if (a === 'modo') { S.modo = el.dataset.v; try { localStorage.setItem('modo', S.modo); } catch (e) {} location.hash = '#home'; return route(false); }
+  if (a === 'ativar') {
+    const cod = (document.getElementById('codAcesso') || {}).value || '';
+    try { const r = await api('/api/ativar-acesso', { method: 'POST', body: { codigo: cod } }); S.caps = r.capacidades; S.modo = 'admin'; toast('Acesso completo liberado'); }
+    catch (e) { toast(e.message); }
+    return route(true);
+  }
   if (a === 'tab') { S.authTab = el.dataset.v; return route(true); }
   if (a === 'ritmoToggle') { $('#ritmoPanel').classList.toggle('open'); return; }
   if (a === 'tick') return tick();
@@ -559,6 +602,7 @@ function resetClock() { clearInterval(clk.id); clk.run = false; clk.left = STAGE
 /* ---------- início ---------- */
 (async function boot() {
   drawStages();
+  try { S.modo = localStorage.getItem('modo'); } catch (e) { S.modo = null; }
   try { S.cfg = await api('/api/config'); } catch (e) { S.cfg = {}; }
   await carregarMe();
   if (!S.me && !location.hash) location.hash = '#login';
