@@ -10,7 +10,14 @@
     "backgroundColor": "#000000",
     "plugins": [
       "expo-router",
-      "expo-status-bar"
+      "expo-status-bar",
+      "expo-secure-store",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Usar biometria para entrar no app."
+        }
+      ]
     ],
     "android": {
       "package": "br.org.jniuniao.discipulado",

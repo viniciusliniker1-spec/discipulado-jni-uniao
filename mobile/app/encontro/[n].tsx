@@ -1,6 +1,6 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Linking, Pressable, Share, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { BLOCOS, ENC, linkVersiculo } from '../../src/content';
 import { api } from '../../src/lib/api';
 import { useSessao } from '../../src/lib/sessao';
@@ -190,9 +190,6 @@ export default function Encontro() {
         <Sec t="Mensagem de meio de semana" />
         <View style={s.card}>
           <Text style={s.italico}>“{enc.msg}”</Text>
-          <Pressable style={s.fraco} onPress={() => { Share.share({ message: enc.msg }).catch(() => {}); }}>
-            <Text style={s.fracoT}>Copiar ou enviar mensagem</Text>
-          </Pressable>
         </View>
 
         <Sec t="Oração e compromisso" />

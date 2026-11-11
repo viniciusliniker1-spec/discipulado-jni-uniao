@@ -1,5 +1,7 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
+import { apagarCredenciais, biometriaDisponivel, guardarCredenciais, lerComBiometria, temCredenciais } from '../src/lib/biometria';
 import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { api } from '../src/lib/api';
 import { useSessao } from '../src/lib/sessao';
@@ -42,6 +44,34 @@ export default function Login() {
   const [codigo, setCodigo] = useState('');
   const [erro, setErro] = useState('');
   const [enviando, setEnviando] = useState(false);
+  const [bio, setBio] = useState(false);
+
+  useEffect(() => {
+    (async () => { setBio((await biometriaDisponivel()) && (await temCredenciais())); })();
+  }, []);
+
+  async function entrarComBiometria() {
+    setErro('');
+    const c = await lerComBiometria();
+    if (!c) return;
+    setEnviando(true);
+    try {
+      await api.entrar(c.email, c.senha);
+      await recarregar();
+      router.replace('/');
+    } catch (e: any) {
+      await apagarCredenciais(); setBio(false);
+      setErro('A senha guardada não funciona mais. Entre com e-mail e senha.');
+    } finally { setEnviando(false); }
+  }
+
+  async function oferecerGuardar(em: string, se: string) {
+    if (!(await biometriaDisponivel()) || (await temCredenciais())) return;
+    await new Promise<void>(res => Alert.alert(
+      'Entrar com biometria?', 'Guardar seu acesso com segurança neste aparelho para entrar com digital ou rosto nas próximas vezes.',
+      [{ text: 'Agora não', style: 'cancel', onPress: () => res() },
+       { text: 'Guardar', onPress: async () => { await guardarCredenciais(em, se); res(); } }]));
+  }
 
   async function enviar() {
     setErro('');
@@ -55,6 +85,7 @@ export default function Login() {
         await api.cadastrar(nome.trim(), email.trim(), senha, papel, codigo.trim());
         await api.entrar(email.trim(), senha);
       }
+      await oferecerGuardar(email.trim(), senha);
       await recarregar();
       router.replace('/');
     } catch (e: any) {
@@ -105,7 +136,7 @@ export default function Login() {
             </>
           )}
 
-          <Campo rotulo="E-mail" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder="seu@email.com" />
+          <Campo rotulo="E-mail" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder="seu@email.com" autoComplete="email" textContentType="emailAddress" importantForAutofill="yes" />
 
           <View style={{ marginTop: 16 }}>
             <Text style={s.rotulo}>Senha</Text>
@@ -116,6 +147,9 @@ export default function Login() {
                 value={senha}
                 onChangeText={setSenha}
                 secureTextEntry={!verSenha}
+                autoComplete={cadastro ? 'new-password' : 'current-password'}
+                textContentType={cadastro ? 'newPassword' : 'password'}
+                importantForAutofill="yes"
                 placeholder={cadastro ? 'Mínimo de 6 caracteres' : 'Sua senha'}
               />
               <Pressable onPress={() => setVerSenha(v => !v)} hitSlop={10}>
@@ -129,6 +163,12 @@ export default function Login() {
           <Pressable onPress={enviar} disabled={enviando} style={[s.botao, enviando && { opacity: 0.6 }]}>
             <Text style={s.botaoTexto}>{enviando ? 'Aguarde…' : cadastro ? 'Criar conta' : 'Entrar'}</Text>
           </Pressable>
+
+          {bio && !cadastro && (
+            <Pressable onPress={entrarComBiometria} disabled={enviando} style={s.bioBotao}>
+              <Text style={s.bioTexto}>Entrar com biometria</Text>
+            </Pressable>
+          )}
 
           <View style={s.separador}>
             <View style={s.linhaSep} />
@@ -193,6 +233,8 @@ const s = StyleSheet.create({
   botao: { backgroundColor: C.bl, borderRadius: 16, paddingVertical: 16, alignItems: 'center', marginTop: 22, shadowColor: C.bl, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 6 }, elevation: 4 },
   botaoTexto: { color: C.white, fontWeight: '900', fontSize: 17, letterSpacing: 0.3 },
 
+  bioBotao: { borderWidth: 2, borderColor: C.bl, borderRadius: 16, paddingVertical: 14, alignItems: 'center', marginTop: 12 },
+  bioTexto: { color: C.bl, fontWeight: '900', fontSize: 16 },
   separador: { flexDirection: 'row', alignItems: 'center', gap: 12, marginVertical: 18 },
   linhaSep: { flex: 1, height: 1, backgroundColor: C.line },
   ou: { color: C.muted, fontWeight: '700' },
