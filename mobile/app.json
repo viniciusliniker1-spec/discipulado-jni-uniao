@@ -7,15 +7,20 @@
     "userInterfaceStyle": "light",
     "scheme": "discipulado",
     "icon": "./assets/icon.png",
-    "backgroundColor": "#ffffff",
-    "plugins": ["expo-router", "expo-status-bar"],
+    "backgroundColor": "#000000",
+    "plugins": [
+      "expo-router",
+      "expo-status-bar"
+    ],
     "android": {
       "package": "br.org.jniuniao.discipulado",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#000000"
       }
     },
-    "experiments": { "typedRoutes": false }
+    "experiments": {
+      "typedRoutes": false
+    }
   }
 }
