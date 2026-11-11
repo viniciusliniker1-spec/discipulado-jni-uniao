@@ -126,6 +126,9 @@ async function api(path, opts = {}) {
     if (path === '/api/me' && m === 'GET') {
       const u = await usuarioLogado();
       const p = await perfilDe(u.id);
+      // 'pendente' só existe depois do patch do Google; sem ele, a conta não fica pendente
+      const r = await sb.from('perfis').select('pendente').eq('id', u.id).maybeSingle();
+      p.pendente = !!(r && r.data && r.data.pendente);
       const out = {
         usuario: publico(p),
         pendente: !!p.pendente,

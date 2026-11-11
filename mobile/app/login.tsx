@@ -5,6 +5,24 @@ import { api } from '../src/lib/api';
 import { useSessao } from '../src/lib/sessao';
 import { Botao, estilos } from '../src/lib/ui';
 import { C } from '../src/lib/tema';
+import { Marca } from '../src/lib/marca';
+
+function Campo({ rotulo, ...props }: { rotulo: string } & React.ComponentProps<typeof TextInput>) {
+  return (
+    <View style={{ marginTop: 14 }}>
+      <Text style={estilos.rotulo}>{rotulo}</Text>
+      <TextInput placeholderTextColor={C.muted} style={estilos.input} {...props} />
+    </View>
+  );
+}
+
+function Opcao({ ativo, texto, onPress }: { ativo: boolean; texto: string; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} style={[estilos.segmento, ativo && estilos.segmentoOn]}>
+      <Text style={[estilos.segmentoTexto, ativo && estilos.segmentoTextoOn]}>{texto}</Text>
+    </Pressable>
+  );
+}
 
 export default function Login() {
   const router = useRouter();
@@ -40,48 +58,46 @@ export default function Login() {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={estilos.pagina}>
-        <Text style={[estilos.titulo, { textAlign: 'center', marginTop: 20 }]}>JNI União</Text>
-        <Text style={[estilos.nota, { textAlign: 'center', marginBottom: 18 }]}>Discipulado individual</Text>
-
-        <View style={{ flexDirection: 'row', marginBottom: 14 }}>
-          {(['entrar', 'cadastro'] as const).map(a => (
-            <Pressable key={a} onPress={() => { setAba(a); setErro(''); }} style={[estilos.chip, { flex: 1, alignItems: 'center' }, aba === a && estilos.chipOn]}>
-              <Text style={[estilos.chipTexto, aba === a && estilos.chipTextoOn]}>{a === 'entrar' ? 'Entrar' : 'Criar conta'}</Text>
-            </Pressable>
-          ))}
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, backgroundColor: C.navy }}>
+      <ScrollView style={{ backgroundColor: C.paper }} contentContainerStyle={estilos.pagina} keyboardShouldPersistTaps="handled">
+        <View style={estilos.cabecalhoMarca}>
+          <Marca tamanho={64} />
+          <Text style={estilos.marcaTitulo}>DISCIPULADO</Text>
+          <Text style={estilos.marcaSub}>JNI União · acompanhamento individual</Text>
         </View>
 
-        <View style={estilos.card}>
+        <View style={estilos.segmentos}>
+          <Opcao ativo={aba === 'entrar'} texto="Entrar" onPress={() => { setAba('entrar'); setErro(''); }} />
+          <Opcao ativo={aba === 'cadastro'} texto="Criar conta" onPress={() => { setAba('cadastro'); setErro(''); }} />
+        </View>
+
+        <View style={[estilos.card, { padding: 18 }]}>
           {aba === 'cadastro' && (
             <>
-              <Text style={estilos.texto}>Nome</Text>
-              <TextInput style={estilos.input} value={nome} onChangeText={setNome} />
-              <Text style={[estilos.texto, { marginTop: 12 }]}>Eu sou</Text>
-              <View style={{ flexDirection: 'row', marginTop: 6 }}>
-                {(['aluno', 'discipulador'] as const).map(p => (
-                  <Pressable key={p} onPress={() => setPapel(p)} style={[estilos.chip, papel === p && estilos.chipOn]}>
-                    <Text style={[estilos.chipTexto, papel === p && estilos.chipTextoOn]}>{p === 'aluno' ? 'Discípulo' : 'Discipulador'}</Text>
-                  </Pressable>
-                ))}
+              <Campo rotulo="Nome" value={nome} onChangeText={setNome} placeholder="Como você se chama?" />
+              <Text style={[estilos.rotulo, { marginTop: 14 }]}>Eu sou</Text>
+              <View style={{ flexDirection: 'row', gap: 8, marginTop: 6 }}>
+                <Opcao ativo={papel === 'aluno'} texto="Discípulo" onPress={() => setPapel('aluno')} />
+                <Opcao ativo={papel === 'discipulador'} texto="Discipulador" onPress={() => setPapel('discipulador')} />
               </View>
               {papel === 'discipulador' && (
                 <>
-                  <Text style={[estilos.texto, { marginTop: 8 }]}>Código de discipulador</Text>
-                  <TextInput style={estilos.input} value={codigo} onChangeText={setCodigo} autoCapitalize="none" />
-                  <Text style={estilos.nota}>Peça o código à liderança.</Text>
+                  <Campo rotulo="Código de discipulador" value={codigo} onChangeText={setCodigo} autoCapitalize="none" placeholder="Peça à liderança" />
                 </>
               )}
             </>
           )}
-          <Text style={[estilos.texto, { marginTop: 12 }]}>E-mail</Text>
-          <TextInput style={estilos.input} value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
-          <Text style={[estilos.texto, { marginTop: 12 }]}>Senha</Text>
-          <TextInput style={estilos.input} value={senha} onChangeText={setSenha} secureTextEntry />
+          <Campo rotulo="E-mail" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder="seu@email.com" />
+          <Campo rotulo="Senha" value={senha} onChangeText={setSenha} secureTextEntry placeholder={aba === 'cadastro' ? 'Mínimo de 6 caracteres' : 'Sua senha'} />
           {!!erro && <Text style={estilos.erro}>{erro}</Text>}
-          <Botao texto={enviando ? 'Aguarde…' : aba === 'entrar' ? 'Entrar' : 'Criar conta'} onPress={enviar} disabled={enviando} />
+          <View style={{ marginTop: 18 }}>
+            <Botao texto={enviando ? 'Aguarde…' : aba === 'entrar' ? 'Entrar' : 'Criar conta'} onPress={enviar} disabled={enviando} />
+          </View>
         </View>
+
+        <Text style={[estilos.nota, { textAlign: 'center', marginTop: 4 }]}>
+          {aba === 'entrar' ? 'Ainda não tem conta? Toque em "Criar conta".' : 'Discipulador precisa do código fornecido pela liderança.'}
+        </Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );

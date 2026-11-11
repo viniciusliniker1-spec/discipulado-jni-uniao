@@ -80,10 +80,14 @@ export const api = {
     const { data } = await supabase.auth.getSession();
     const u = data.session && data.session.user;
     if (!u) return null;
-    const { data: p, error } = await supabase.from('perfis').select('id,nome,email,papel,duplo,pendente').eq('id', u.id).maybeSingle();
+    const { data: p, error } = await supabase.from('perfis').select('id,nome,email,papel,duplo').eq('id', u.id).maybeSingle();
     if (error) throw traduzir(error);
     if (!p) return null;
-    const caps = p.pendente
+    // 'pendente' só existe depois do patch do Google; sem ele, a conta não fica pendente
+    const { data: pend } = await supabase.from('perfis').select('pendente').eq('id', u.id).maybeSingle().then(r => r, () => ({ data: null }));
+    const pendente = !!(pend && (pend as any).pendente);
+    (p as any).pendente = pendente;
+    const caps = pendente
       ? { curso: false, conduzir: false, admin: false }
       : {
           curso: p.papel !== 'admin' || !!p.duplo,
