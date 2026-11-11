@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual do Discipulado | JNI União</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#home">
+    <svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true"><path d="M6 30 32 6l26 24v8L32 14 6 38z" fill="#fff" stroke="#0b1020" stroke-width="2.5" stroke-linejoin="round"/><path d="M6 54 32 30l26 24v8L32 38 6 62z" fill="#fff" stroke="#0b1020" stroke-width="2.5" stroke-linejoin="round"/></svg>
+    <div>JNI União<small>Discipulado individual</small></div>
+  </a>
+  <div id="who" class="who"></div>
+</header>
+<div class="bar"></div>
+<div class="layout" id="layout">
+  <aside id="side"></aside>
+  <main id="app"><p class="note">Carregando…</p></main>
+</div>
+<div class="ritmo" id="ritmo">
+  <div class="ritmo-panel" id="ritmoPanel">
+    <h3 class="disp" style="font-size:1.1rem">Ritmo do encontro</h3>
+    <p class="note" style="margin:4px 0">Escolha uma etapa e acompanhe o tempo sem perder o fio da conversa.</p>
+    <div class="stages" id="stages"></div>
+    <div class="clock" id="clock">05:00</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+      <button class="btn" data-act="tick">Iniciar / pausar</button>
+      <button class="btn ghost" data-act="reset">Zerar</button>
+    </div>
+  </div>
+  <button class="ritmo-btn" data-act="ritmoToggle">⏱ Ritmo</button>
+</div>
+<div class="toast" id="toast"></div>
+<script src="/content.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
