@@ -24,7 +24,8 @@ if (!ADMIN_EMAIL) console.warn('[aviso] ADMIN_EMAIL não definido: ninguém ter�
 // progress: alunoId -> {n: {bal,txt,perg,dias,reg,quiz,comp,done}}   (visível ao aluno e ao discipulador designado)
 // notas: discipuladorId -> alunoId -> {n: {...}}                       (privado do discipulador)
 // depois: alunoId -> {m,c,a}
-let db = { users: {}, sessions: {}, assign: {}, progress: {}, notas: {}, depois: {} };
+// atividade: alunoId -> ["AAAA-MM-DD", ...] (dias em que o aluno registrou algo; usado nos relatórios)
+let db = { users: {}, sessions: {}, assign: {}, progress: {}, notas: {}, depois: {}, atividade: {} };
 try { db = Object.assign(db, JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))); } catch (e) { /* primeiro uso */ }
 function persist() {
   fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
@@ -86,6 +87,42 @@ function sanitizarEncontro(e) {
 }
 function sanitizarNota(e) {
   return { percepcoes: texto(e && e.percepcoes, 3000), compromisso: texto(e && e.compromisso, 3000), acompanhamento: texto(e && e.acompanhamento, 3000), anotacoes: texto(e && e.anotacoes, 3000) };
+}
+function registrarAtividade(uid) {
+  const d = new Date().toISOString().slice(0, 10);
+  const a = db.atividade[uid] || [];
+  if (!a.includes(d)) a.push(d);
+  db.atividade[uid] = a.slice(-90);
+}
+// Métricas de atividade: só números e datas, nunca respostas ou registro
+function metricasAluno(alunoId) {
+  const prog = db.progress[alunoId] || {};
+  const dias7 = new Set();
+  const hoje = Date.now();
+  (db.atividade[alunoId] || []).forEach(d => { if (hoje - new Date(d).getTime() <= 7 * 864e5) dias7.add(d); });
+  const encontros = [];
+  let concluidos = 0, dias = 0, respostas = 0, registros = 0;
+  for (let n = 1; n <= 10; n++) {
+    const e = prog[n];
+    if (!e) { encontros.push({ n, done: false, dias: 0, respostas: 0, registros: 0, balizas: 0, textos: 0 }); continue; }
+    const r = {
+      n, done: !!e.done,
+      dias: (e.dias || []).filter(Boolean).length,
+      respostas: Object.values(e.perg || {}).filter(v => v && v.trim()).length,
+      registros: (e.reg || []).filter(row => row.some(c => c && c.trim())).length,
+      balizas: (e.bal || []).filter(Boolean).length,
+      textos: (e.txt || []).filter(Boolean).length
+    };
+    if (r.done) concluidos++;
+    dias += r.dias; respostas += r.respostas; registros += r.registros;
+    encontros.push(r);
+  }
+  const ultima = (db.atividade[alunoId] || []).slice(-1)[0] || null;
+  return { ultimaAtividade: ultima, diasAtivos7: dias7.size, concluidos, dias, respostas, registros, encontros };
+}
+function notasPreenchidas(discId, alunoId) {
+  const n = (db.notas[discId] || {})[alunoId] || {};
+  return Object.values(n).filter(x => x && Object.values(x).some(v => v && v.trim())).length;
 }
 function discipulosDe(discId) {
   return Object.keys(db.assign).filter(a => db.assign[a] === discId).map(a => db.users[a]).filter(Boolean).map(publico);
@@ -154,6 +191,7 @@ async function api(req, res, url) {
     const b = await lerCorpo(req);
     db.progress[user.id] = db.progress[user.id] || {};
     db.progress[user.id][n] = sanitizarEncontro(b);
+    registrarAtividade(user.id);
     persist();
     return enviar(res, 200, { ok: true });
   }
@@ -161,7 +199,8 @@ async function api(req, res, url) {
   if (p === '/api/meu-depois' && m === 'GET') return enviar(res, 200, db.depois[user.id] || { m: '', c: '', a: '' });
   if (p === '/api/meu-depois' && m === 'PUT') {
     const b = await lerCorpo(req);
-    db.depois[user.id] = { m: texto(b.m), c: texto(b.c), a: texto(b.a) }; persist();
+    db.depois[user.id] = { m: texto(b.m), c: texto(b.c), a: texto(b.a) };
+    registrarAtividade(user.id); persist();
     return enviar(res, 200, { ok: true });
   }
 
@@ -192,6 +231,33 @@ async function api(req, res, url) {
       persist();
       return enviar(res, 200, { ok: true });
     }
+  }
+
+  // Relatório do discipulador: atividades dos seus discípulos (registro completo, pois ele é designado)
+  if (p === '/api/relatorio/discipulador' && m === 'GET') {
+    if (user.papel !== 'discipulador') return enviar(res, 403, { erro: 'Apenas discipuladores.' });
+    const discipulos = discipulosDe(user.id).map(d => {
+      const met = metricasAluno(d.id);
+      return { ...d, ...met, notas: notasPreenchidas(user.id, d.id) };
+    });
+    return enviar(res, 200, { discipulos });
+  }
+
+  // Relatório do administrador: só números e datas, sem respostas nem registro
+  if (p === '/api/relatorio/admin' && m === 'GET') {
+    if (user.papel !== 'admin') return enviar(res, 403, { erro: 'Somente o administrador.' });
+    const alunos = Object.values(db.users).filter(u => u.papel === 'aluno').map(u => {
+      const d = db.assign[u.id] ? db.users[db.assign[u.id]] : null;
+      const { encontros, ...met } = metricasAluno(u.id);
+      return { id: u.id, nome: u.nome, email: u.email, discipulador: d ? d.nome : null, ...met };
+    });
+    const discipuladores = Object.values(db.users).filter(u => u.papel === 'discipulador').map(d => {
+      const meus = alunos.filter(a => a.discipulador === d.nome);
+      const media = meus.length ? Math.round(meus.reduce((s, a) => s + a.concluidos, 0) / meus.length * 10) / 10 : 0;
+      const semAtividade = meus.filter(a => a.diasAtivos7 === 0).length;
+      return { id: d.id, nome: d.nome, discipulos: meus.length, mediaConcluidos: media, semAtividade7: semAtividade };
+    });
+    return enviar(res, 200, { alunos, discipuladores });
   }
 
   // Administrador

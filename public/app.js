@@ -62,6 +62,8 @@ async function route(keep) {
       const id = h.slice(2);
       await carregarAluno(id);
       html = viewDiscAlunoOverview(id); side = sideDisc(h);
+    } else if (h === 'relatorio' && S.me.papel === 'discipulador') {
+      html = await viewRelatorioDisc(); side = sideDisc(h);
     } else if (h === 'avaliacao' && S.me.papel === 'discipulador') {
       html = viewAval(); side = sideDisc(h);
     } else if (h === 'depois') {
@@ -110,7 +112,8 @@ function sideDisc(cur) {
     h += '<p class="note" style="margin:6px 8px 0;font-weight:700">' + nome + '</p>';
     ns.forEach(n => { h += '<a href="#enc-' + n + '" class="' + (cur === 'enc-' + n ? 'on' : '') + '"><span class="num" style="background:' + BLOCOS[n][1] + '">' + n + '</span>' + esc(ENC[n - 1].t) + '</a>'; });
   });
-  h += '<h4>Ferramentas</h4><a href="#avaliacao" class="' + (cur === 'avaliacao' ? 'on' : '') + '"><span class="num" style="background:var(--mar);color:#fff">!</span>Avaliação pastoral</a>';
+  h += '<h4>Ferramentas</h4><a href="#relatorio" class="' + (cur === 'relatorio' ? 'on' : '') + '"><span class="num" style="background:var(--bl);color:#fff">▤</span>Relatórios</a>';
+  h += '<a href="#avaliacao" class="' + (cur === 'avaliacao' ? 'on' : '') + '"><span class="num" style="background:var(--mar);color:#fff">!</span>Avaliação pastoral</a>';
   return h;
 }
 function sideAdmin() { return '<a href="#admin" class="on"><span class="num" style="background:var(--or);color:#fff">A</span>Administração</a>'; }
@@ -384,9 +387,43 @@ function viewDepois() {
   <div class="card"><b style="color:var(--or)">Quem vai caminhar comigo</b><textarea data-field="dep" data-k="a" style="margin-top:8px">${esc(d.a)}</textarea></div>
   <p class="disp" style="text-align:center;color:var(--or);font-size:1.6rem;margin:24px 0">Marche! Em frente!</p>`;
 }
+/* ---------- relatórios ---------- */
+function dataBR(d) { if (!d) return '—'; const [a, m, dd] = d.split('-'); return dd + '/' + m + '/' + a; }
+function statusAtividade(ultima, dias7) {
+  if (!ultima) return '<span class="pill" style="background:var(--mar)">sem atividade</span>';
+  return dias7 > 0 ? '<span class="pill" style="background:var(--ok)">em dia</span>' : '<span class="pill" style="background:var(--or)">parado 7+ dias</span>';
+}
+function barraProg(n) { return '<div class="bar-prog" style="width:120px;display:inline-block;vertical-align:middle;margin:0 6px 0 0"><i style="width:' + (n * 10) + '%"></i></div>' + n + '/10'; }
+function matrizEncontros(encontros) {
+  return '<div class="chips">' + encontros.map(e => '<span class="pill" title="Encontro ' + e.n + '" style="background:' + (e.done ? 'var(--ok)' : (e.dias || e.respostas || e.registros || e.balizas ? 'var(--cy)' : '#c9d2ea')) + ';color:#0b1020;min-width:30px;text-align:center">' + e.n + '</span>').join('') + '</div><p class="note" style="margin:4px 0 0">Verde: concluído · Azul: em andamento · Cinza: não iniciado</p>';
+}
+async function viewRelatorioDisc() {
+  const r = await api('/api/relatorio/discipulador');
+  S.discipulos = r.discipulos;
+  if (!r.discipulos.length) return '<div class="sec">' + CHEV + '<h2>Relatórios</h2></div><div class="card">Nenhum discípulo designado ainda.</div>';
+  const linhas = r.discipulos.map(d => '<tr><td><a href="#d-' + d.id + '" style="font-weight:700">' + esc(d.nome) + '</a></td><td>' + statusAtividade(d.ultimaAtividade, d.diasAtivos7) + '<br><small class="note">última: ' + dataBR(d.ultimaAtividade) + '</small></td><td>' + barraProg(d.concluidos) + '</td><td>' + d.dias + '/50</td><td>' + d.respostas + '</td><td>' + d.registros + '</td><td>' + d.notas + '</td></tr>').join('');
+  const detalhes = r.discipulos.map(d => '<div class="card"><b>' + esc(d.nome) + '</b> <span class="note">· ' + (d.diasAtivos7 ? d.diasAtivos7 + ' dia(s) ativo(s) nos últimos 7' : 'nenhuma atividade nos últimos 7 dias') + '</span>' + matrizEncontros(d.encontros) + '</div>').join('');
+  return `
+  <div class="sec">${CHEV}<h2>Relatórios dos discípulos</h2></div>
+  <div class="card" style="padding:8px"><table><thead><tr><th>Discípulo</th><th>Atividade</th><th>Encontros</th><th>Dias do desafio</th><th>Respostas</th><th>Registros</th><th>Notas suas</th></tr></thead><tbody>${linhas}</tbody></table></div>
+  <div class="sec">${CHEV}<h2>Encontro a encontro</h2></div>
+  ${detalhes}`;
+}
+async function relatorioAdminHTML() {
+  const r = await api('/api/relatorio/admin');
+  const disc = r.discipuladores.length ? r.discipuladores.map(d => '<tr><td>' + esc(d.nome) + '</td><td>' + d.discipulos + '</td><td>' + d.mediaConcluidos + '/10</td><td>' + d.semAtividade7 + '</td></tr>').join('') : '<tr><td colspan="4">Nenhum discipulador ainda.</td></tr>';
+  const al = r.alunos.length ? r.alunos.map(a => '<tr><td>' + esc(a.nome) + '</td><td>' + esc(a.discipulador || '—') + '</td><td>' + statusAtividade(a.ultimaAtividade, a.diasAtivos7) + '<br><small class="note">última: ' + dataBR(a.ultimaAtividade) + '</small></td><td>' + barraProg(a.concluidos) + '</td><td>' + a.dias + '/50</td></tr>').join('') : '<tr><td colspan="5">Nenhum discípulo ainda.</td></tr>';
+  return `
+  <div class="sec">${CHEV}<h2>Relatório por discipulador</h2></div>
+  <div class="card" style="padding:8px"><table><thead><tr><th>Discipulador</th><th>Discípulos</th><th>Média de encontros</th><th>Sem atividade (7 dias)</th></tr></thead><tbody>${disc}</tbody></table></div>
+  <div class="sec">${CHEV}<h2>Relatório por discípulo</h2></div>
+  <div class="card" style="padding:8px"><table><thead><tr><th>Discípulo</th><th>Discipulador</th><th>Atividade</th><th>Encontros</th><th>Dias do desafio</th></tr></thead><tbody>${al}</tbody></table></div>
+  <p class="note">O relatório mostra só números e datas. Respostas e registros não aparecem para o administrador.</p>`;
+}
 async function viewAdmin() {
   const r = await api('/api/admin/usuarios');
   S.usuarios = r.usuarios;
+  const relatorio = await relatorioAdminHTML();
   const discs = r.usuarios.filter(u => u.papel === 'discipulador');
   const linhas = r.usuarios.filter(u => u.papel !== 'admin').map(u => {
     const sel = u.papel === 'aluno'
@@ -398,7 +435,8 @@ async function viewAdmin() {
   return `
   <div class="sec">${CHEV}<h2>Administração</h2></div>
   <div class="card"><p style="margin:0">Aqui você designa um discipulador para cada discípulo e vê quais encontros cada um já concluiu. Respostas, registro e notas não aparecem aqui.</p>
-  <div style="margin-top:12px"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Discipulador designado</th><th>Encontros concluídos</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum usuário ainda.</td></tr>'}</tbody></table></div></div>`;
+  <div style="margin-top:12px"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Discipulador designado</th><th>Encontros concluídos</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum usuário ainda.</td></tr>'}</tbody></table></div></div>
+  ${relatorio}`;
 }
 
 /* ---------- ações ---------- */
