@@ -14,3 +14,6 @@ export function linkVersiculo(ref: string): string {
   if (!m || !LIVRO_YV[m[1]]) return 'https://www.bible.com/';
   return 'https://www.bible.com/bible/' + NVI_ID + '/' + LIVRO_YV[m[1]] + '.' + m[2] + '.' + m[3];
 }
+
+// Áreas da avaliação pastoral: [área, sinais observáveis, próximo cuidado, cor]
+export const AREAS: string[][] = (data as any).AREAS;

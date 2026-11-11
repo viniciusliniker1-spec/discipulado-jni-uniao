@@ -160,6 +160,53 @@ export const api = {
     const { error } = await supabase.rpc('designar_discipulador', { p_aluno: alunoId, p_disc: discipuladorId });
     if (error) throw traduzir(error);
   },
+  async depoisGet(): Promise<{ m: string; c: string; a: string }> {
+    const id = await uid();
+    const { data } = await supabase.from('depois').select('dados').eq('aluno_id', id).maybeSingle();
+    return data && data.dados ? data.dados : { m: '', c: '', a: '' };
+  },
+  async depoisSalvar(d: { m: string; c: string; a: string }) {
+    const id = await uid();
+    const { error } = await supabase.from('depois').upsert({ aluno_id: id, dados: { m: texto(d.m), c: texto(d.c), a: texto(d.a) } });
+    if (error) throw traduzir(error);
+  },
+
+  // Relatório do discipulador: só os discípulos designados a ele
+  async relatorioDiscipulador() {
+    const id = await uid();
+    const alunos = await api.discipulos();
+    const discipulos: any[] = [];
+    for (const a of alunos) {
+      const met = await api.metricas(a.id);
+      const { data: ns } = await supabase.from('notas').select('dados').eq('discipulador_id', id).eq('aluno_id', a.id);
+      const notas = (ns || []).filter((r: any) => r.dados && Object.values(r.dados).some((v: any) => v && String(v).trim())).length;
+      discipulos.push({ ...a, ...met, notas });
+    }
+    const { data: at } = await supabase.from('atividade_notas').select('dia').eq('discipulador_id', id);
+    const dias = (at || []).map((r: any) => r.dia).sort();
+    return { discipulos, minhasNotas: { ultimaAtividade: dias.length ? dias[dias.length - 1] : null, semanas: semanasDe(dias) } };
+  },
+
+  // Relatório do administrador: só números e datas
+  async relatorioAdmin() {
+    const { data: perfis } = await supabase.from('perfis').select('id,nome,email,papel');
+    const { data: des } = await supabase.from('designacoes').select('aluno_id,discipulador_id');
+    const porId: Record<string, any> = Object.fromEntries((perfis || []).map((x: any) => [x.id, x]));
+    const alunos: any[] = [];
+    for (const a of (perfis || []).filter((x: any) => x.papel === 'aluno')) {
+      const met = await api.metricas(a.id);
+      const dId = ((des || []).find((d: any) => d.aluno_id === a.id) || ({} as any)).discipulador_id || null;
+      const { encontros, ...resto } = met;
+      alunos.push({ id: a.id, nome: a.nome, discipulador: dId && porId[dId] ? porId[dId].nome : null, discipuladorId: dId, ...resto });
+    }
+    const discipuladores = (perfis || []).filter((x: any) => x.papel === 'discipulador').map((d: any) => {
+      const meus = alunos.filter(a => a.discipuladorId === d.id);
+      const media = meus.length ? Math.round((meus.reduce((s, a) => s + a.concluidos, 0) / meus.length) * 10) / 10 : 0;
+      return { id: d.id, nome: d.nome, discipulos: meus.length, mediaConcluidos: media, semAtividade7: meus.filter(a => a.diasAtivos7 === 0).length };
+    });
+    return { alunos, discipuladores };
+  },
+
   async ativarAcesso(codigo: string) {
     const { error } = await supabase.rpc('ativar_acesso', { codigo });
     if (error) throw traduzir(error);

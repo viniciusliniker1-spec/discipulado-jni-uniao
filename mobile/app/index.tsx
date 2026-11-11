@@ -41,6 +41,19 @@ function Avisos() {
   );
 }
 
+function Atalhos({ itens }: { itens: { rotulo: string; rota: string }[] }) {
+  const router = useRouter();
+  return (
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 }}>
+      {itens.map(i => (
+        <Pressable key={i.rota} onPress={() => router.push(i.rota as any)} style={[estilos.chip, { marginRight: 8 }]}>
+          <Text style={estilos.chipTexto}>{i.rotulo}</Text>
+        </Pressable>
+      ))}
+    </View>
+  );
+}
+
 function HomeAluno() {
   const { discipulador } = useSessao();
   const router = useRouter();
@@ -52,6 +65,7 @@ function HomeAluno() {
       <Text style={estilos.titulo}>Olá, {usuario ? usuario.nome.split(' ')[0] : ''}</Text>
       <Text style={estilos.texto}>{discipulador ? 'Seu discipulador: ' + discipulador.nome : 'Você ainda não tem um discipulador designado.'}</Text>
       <Avisos />
+      <Atalhos itens={[{ rotulo: 'Depois do décimo', rota: '/depois' }, { rotulo: 'Ritmo do encontro', rota: '/ritmo' }]} />
       <Text style={estilos.subtitulo}>Encontros</Text>
       {ENC.map((e: any) => {
         const feito = prog[e.n] && prog[e.n].done;
@@ -91,6 +105,7 @@ function CartaoDiscipulo({ d }: { d: Perfil }) {
 }
 
 function HomeDiscipulador() {
+  const router = useRouter();
   const [lista, setLista] = useState<Perfil[] | null>(null);
   useEffect(() => { api.discipulos().then(setLista).catch(() => setLista([])); }, []);
   return (
@@ -98,6 +113,15 @@ function HomeDiscipulador() {
       <Text style={estilos.titulo}>Conduzir é viver junto</Text>
       <Text style={estilos.texto}>Você conduz conversas, não dá aulas. Sua vida com Deus é o primeiro material que o discípulo vê.</Text>
       <Avisos />
+      <Atalhos itens={[{ rotulo: 'Relatórios', rota: '/relatorios' }, { rotulo: 'Avaliação pastoral', rota: '/avaliacao' }, { rotulo: 'Ritmo', rota: '/ritmo' }]} />
+      <Text style={estilos.subtitulo}>Manual do discipulador</Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+        {ENC.map((e: any) => (
+          <Pressable key={e.n} onPress={() => router.push('/conduzir/' + e.n)} style={[estilos.chip, { marginRight: 6 }]}>
+            <Text style={estilos.chipTexto}>{e.n}. {e.t}</Text>
+          </Pressable>
+        ))}
+      </View>
       <Text style={estilos.subtitulo}>Progresso dos meus discípulos</Text>
       {lista === null && <Carregando />}
       {lista && lista.length === 0 && <Text style={estilos.nota}>Nenhum discípulo designado ainda. A liderança faz essa indicação.</Text>}
@@ -170,6 +194,7 @@ export default function Home() {
   return (
     <ScrollView contentContainerStyle={estilos.pagina}>
       <Seletor />
+      {modoAtual === 'admin' && <Atalhos itens={[{ rotulo: 'Relatórios', rota: '/relatorios' }]} />}
       {modoAtual === 'aluno' && <HomeAluno />}
       {modoAtual === 'discipulador' && <HomeDiscipulador />}
       {modoAtual === 'admin' && <PainelAdmin />}

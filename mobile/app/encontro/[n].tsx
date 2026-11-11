@@ -30,6 +30,7 @@ export default function Encontro() {
   const { usuario } = useSessao();
   const [e, setE] = useState<any>(null);
   const salvoEm = useRef<any>(null);
+  const [status, setStatus] = useState('');
 
   useEffect(() => {
     if (!usuario) return;
@@ -41,7 +42,9 @@ export default function Encontro() {
     setE((antes: any) => {
       const novo = { ...antes, ...parcial };
       clearTimeout(salvoEm.current);
-      const gravar = () => api.salvarEncontro(n, novo).catch(() => {});
+      const gravar = () => api.salvarEncontro(n, novo)
+        .then(() => setStatus('Salvo'))
+        .catch(() => setStatus('Sem conexão. Não foi salvo; tente de novo quando voltar a internet.'));
       if (agora) gravar(); else salvoEm.current = setTimeout(gravar, 700);
       return novo;
     });
@@ -156,6 +159,7 @@ export default function Encontro() {
           onPress={() => mudar({ done: !e.done }, true)}
         />
         <Text style={[estilos.nota, { marginTop: 10 }]}>{enc.msg}</Text>
+        {!!status && <Text style={[estilos.nota, { marginTop: 6, color: status.startsWith('Sem') ? C.mar : C.ok }]}>{status}</Text>}
       </ScrollView>
     </>
   );
