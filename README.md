@@ -1,3 +1,27 @@
+# Discipulado JNI União
+
+App de discipulado (10 encontros) publicado no GitHub Pages, com dados e login no Supabase.
+
+## Publicar (GitHub Pages + Supabase)
+
+1. **Banco:** no SQL Editor do Supabase (https://supabase.com/dashboard/project/ttauxxhosrhcvhtwltpv/sql/new), cole e rode o arquivo `supabase/schema.sql` inteiro.
+2. **Códigos e e-mail do ADM:** no mesmo SQL Editor, troque os valores padrão (todos `JNIconexao` no início) e o e-mail do administrador:
+   ```sql
+   update public.config set valor = 'NOVO_CODIGO' where chave = 'codigo_discipulador';
+   update public.config set valor = 'NOVO_CODIGO' where chave = 'codigo_acesso';
+   update public.config set valor = 'seu@email.com' where chave = 'email_admin';
+   ```
+   O administrador é a conta criada com esse e-mail.
+3. **Cadastro sem confirmação de e-mail:** em Authentication > Sign In / Providers > Email, desative *Confirm email*. Sem isso, a conta só entra depois de confirmar o e-mail.
+4. **Pages:** em Settings > Pages do repositório, escolha *Source: GitHub Actions*. Cada push na `main` publica a pasta `public/`.
+5. O endereço fica em `https://viniciusliniker1-spec.github.io/discipulado-jni-uniao/`. No celular, abra no Chrome/Safari e escolha *Adicionar à tela inicial*.
+
+A chave publicável do Supabase fica em `public/config.js`. Ela não dá acesso aos dados: quem protege os dados são as regras de acesso (RLS) do `schema.sql`.
+
+## Versão com servidor Node (só para testes locais)
+
+A pasta raiz tem um servidor Node (`server.js`) com a mesma lógica, mas em arquivo JSON. Ele não é usado na publicação; mantenha-o apenas para testes locais.
+
 # Manual do Discipulado · JNI União
 
 App para cursar (discípulo) e ministrar (discipulador) os 10 encontros do Discipulado individual.

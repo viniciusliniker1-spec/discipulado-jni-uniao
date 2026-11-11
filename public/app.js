@@ -12,17 +12,6 @@ const DEF = () => ({ bal: [false, false, false], txt: [false, false, false], per
 const encOf = (src, n) => Object.assign(DEF(), (src && src[n]) || {});
 const timers = {};
 
-async function api(path, opts = {}) {
-  const r = await fetch(path, {
-    method: opts.method || 'GET',
-    credentials: 'same-origin',
-    headers: opts.body ? { 'Content-Type': 'application/json' } : {},
-    body: opts.body ? JSON.stringify(opts.body) : undefined
-  });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) { const e = new Error(j.erro || 'Erro'); e.status = r.status; throw e; }
-  return j;
-}
 function toast(t) { const el = $('#toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => el.style.display = 'none', 2200); }
 function debounceSave(key, fn, ms = 500) { clearTimeout(timers[key]); timers[key] = setTimeout(fn, ms); }
 
