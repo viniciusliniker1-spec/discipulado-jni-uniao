@@ -1,6 +1,6 @@
 import { Redirect, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { ENC, BLOCOS } from '../src/content';
 import { api, Perfil, ErroApp } from '../src/lib/api';
 import { useSessao } from '../src/lib/sessao';
@@ -22,6 +22,76 @@ function Seletor() {
     </View>
   );
 }
+
+// Cabeçalho do app (mesmo da versão web): barra escura, marca, modo e faixa tricolor
+function Topo() {
+  const { modoAtual, sair } = useSessao();
+  return (
+    <View style={{ marginHorizontal: -16, marginTop: -16 }}>
+      <View style={tp.barra}>
+        <Image source={require('../assets/icon.png')} style={tp.icone} />
+        <View style={{ flex: 1 }}>
+          <Text style={tp.titulo}>JNI União</Text>
+          <Text style={tp.sub}>Discipulado individual</Text>
+        </View>
+        {!!modoAtual && (
+          <View style={tp.pilula}><Text style={tp.pilulaTexto}>{NOMES_MODO[modoAtual]}</Text></View>
+        )}
+        <Pressable onPress={() => sair()} style={tp.sair}><Text style={tp.sairTexto}>Sair</Text></Pressable>
+      </View>
+      <View style={tp.faixa}>
+        <View style={{ flex: 1, backgroundColor: C.cy }} />
+        <View style={{ flex: 1, backgroundColor: C.bl }} />
+        <View style={{ flex: 1, backgroundColor: C.or }} />
+      </View>
+    </View>
+  );
+}
+
+const tp = StyleSheet.create({
+  barra: { backgroundColor: C.navy, flexDirection: 'row', alignItems: 'center', gap: 10, paddingTop: 52, paddingBottom: 14, paddingHorizontal: 16 },
+  icone: { width: 40, height: 40, borderRadius: 10 },
+  titulo: { color: C.white, fontWeight: '800', fontSize: 16 },
+  sub: { color: '#9aa6c7', fontSize: 12 },
+  pilula: { backgroundColor: '#1b2440', borderRadius: 99, paddingVertical: 4, paddingHorizontal: 10 },
+  pilulaTexto: { color: '#c9d2ea', fontWeight: '700', fontSize: 12 },
+  sair: { backgroundColor: C.white, borderRadius: 12, paddingVertical: 8, paddingHorizontal: 14 },
+  sairTexto: { color: C.navy, fontWeight: '800' },
+  faixa: { flexDirection: 'row', height: 5 },
+});
+
+// Painel de boas-vindas do discípulo (mesmo da versão web)
+function Hero({ nome }: { nome: string }) {
+  const blocos = [
+    { t: 'Conhecendo Jesus', d: 'Encontros 1 a 3', c: C.cy },
+    { t: 'Caminhando com Jesus', d: 'Encontros 4 a 7', c: C.bl },
+    { t: 'Vivendo como Jesus', d: 'Encontros 8 a 10', c: C.or },
+  ];
+  return (
+    <View style={hr.caixa}>
+      <Text style={hr.titulo}>Olá, {nome}</Text>
+      <View style={hr.tag}><Text style={hr.tagTexto}>EM FORMAÇÃO</Text></View>
+      <Text style={hr.sub}>10 encontros individuais para uma fé viva.</Text>
+      {blocos.map(b => (
+        <View key={b.t} style={[hr.bloco, { borderLeftColor: b.c }]}>
+          <Text style={hr.blocoTitulo}>{b.t}</Text>
+          <Text style={hr.blocoSub}>{b.d}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+const hr = StyleSheet.create({
+  caixa: { backgroundColor: C.navy2, borderRadius: 22, padding: 22, marginBottom: 14 },
+  titulo: { color: C.white, fontSize: 30, fontWeight: '900', letterSpacing: 0.5 },
+  tag: { alignSelf: 'flex-start', backgroundColor: C.or, borderRadius: 99, paddingVertical: 5, paddingHorizontal: 16, marginTop: 10 },
+  tagTexto: { color: C.white, fontWeight: '900', letterSpacing: 1, fontSize: 13 },
+  sub: { color: '#c9d2ea', fontSize: 15, marginTop: 10, lineHeight: 22 },
+  bloco: { borderLeftWidth: 4, paddingLeft: 12, marginTop: 14 },
+  blocoTitulo: { color: C.white, fontWeight: '800', fontSize: 15 },
+  blocoSub: { color: '#c9d2ea', fontSize: 14, marginTop: 2 },
+});
 
 function Avisos() {
   const [lista, setLista] = useState<{ id: number; texto: string }[]>([]);
@@ -62,8 +132,11 @@ function HomeAluno() {
   useEffect(() => { if (usuario) api.progressoDe(usuario.id).then(setProg).catch(() => {}); }, [usuario]);
   return (
     <>
-      <Text style={estilos.titulo}>Olá, {usuario ? usuario.nome.split(' ')[0] : ''}</Text>
-      <Text style={estilos.texto}>{discipulador ? 'Seu discipulador: ' + discipulador.nome : 'Você ainda não tem um discipulador designado.'}</Text>
+      <Hero nome={usuario ? usuario.nome.split(' ')[0] : ''} />
+      <View style={estilos.card}>
+        <Text style={[estilos.texto, { fontWeight: '800' }]}>Seu discipulador</Text>
+        <Text style={estilos.texto}>{discipulador ? discipulador.nome : 'Ainda não há um discipulador designado para você. A liderança fará essa indicação.'}</Text>
+      </View>
       <Avisos />
       <Atalhos itens={[{ rotulo: 'Depois do décimo', rota: '/depois' }, { rotulo: 'Ritmo do encontro', rota: '/ritmo' }]} />
       <Text style={estilos.subtitulo}>Encontros</Text>
@@ -194,6 +267,7 @@ export default function Home() {
   if (usuario.pendente) return <Redirect href="/escolher" />;
   return (
     <ScrollView contentContainerStyle={estilos.pagina}>
+      <Topo />
       <Seletor />
       {modoAtual === 'admin' && <Atalhos itens={[{ rotulo: 'Relatórios', rota: '/relatorios' }]} />}
       {modoAtual === 'aluno' && <HomeAluno />}

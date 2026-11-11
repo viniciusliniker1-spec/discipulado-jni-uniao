@@ -177,21 +177,30 @@ function viewLogin(h) {
   const papel = S.papelCad;
   const gHref = '/auth/google?papel=' + papel + (papel === 'discipulador' ? '&codigo=' + encodeURIComponent(S.codigoCad || '') : '');
   return `
-  <section class="login">
-    <div class="card" style="padding:26px">
-      ${CHEV.replace('class="chev"', 'class="chev"')}
-      <h1 class="disp" style="font-size:2rem">Manual do Discipulado</h1>
-      <p class="note">Acompanhamento individual da JNI União</p>
+  <section class="login-tela">
+    <div class="lg-topo">
+      <img src="icons/icon-192.png" class="lg-icone" alt="">
+      <h1>DISCIPULADO</h1>
+      <p class="lg-sub">JNI União · acompanhamento individual</p>
+      <p class="lg-frase">Cresça na fé. <span>Caminhe com Jesus.</span></p>
+      <div class="lg-faixa"><i></i><i></i><i></i></div>
+    </div>
+    <div class="tabs lg-abas">
+      <button class="${!cad ? 'on' : ''}" data-act="tab" data-v="entrar">Entrar</button>
+      <button class="${cad ? 'on' : ''}" data-act="tab" data-v="cadastro">Criar conta</button>
+    </div>
+    <div class="lg-cartao">
       ${erro ? '<div class="erro">' + esc(erro) + '</div>' : ''}
-      <div class="tabs">
-        <button class="${!cad ? 'on' : ''}" data-act="tab" data-v="entrar">Entrar</button>
-        <button class="${cad ? 'on' : ''}" data-act="tab" data-v="cadastro">Criar conta</button>
-      </div>
       ${cad ? formCadastro(papel) : formEntrar()}
       <div class="sep">ou</div>
       <a class="gbtn" href="${gHref}" ${S.cfg.googleAtivo ? '' : 'aria-disabled="true"'}>Continuar com Google</a>
-      ${S.cfg.googleAtivo ? '' : '<p class="note" style="text-align:center">O login com Google será ativado quando as chaves forem configuradas.</p>'}
+      ${S.cfg.googleAtivo ? '' : '<p class="note lg-nota">O login com Google será ativado quando as chaves forem configuradas.</p>'}
       <div id="msgAuth"></div>
+    </div>
+    <div class="lg-rodape">
+      <p class="lg-versiculo">“E conhecereis a verdade, e a verdade vos libertará.”</p>
+      <p class="lg-ref">João 8:32</p>
+      <p class="lg-logo"><b>JNI</b><span></span><small>UNIÃO</small></p>
     </div>
   </section>`;
 }
