@@ -1,0 +1,683 @@
+{
+ "ENC": [
+  {
+   "n": 1,
+   "t": "Começar com Jesus",
+   "s": "Conhecer Jesus, reconhecer sua necessidade e responder ao seu convite",
+   "bal": [
+    "Quem é Jesus para você hoje, com as suas palavras?",
+    "O que o convite “siga-me” pede e o que ele oferece?",
+    "O primeiro passo de quem decide seguir"
+   ],
+   "abrir": "Se alguém perguntasse hoje “quem é Jesus para você?”, o que você responderia sem pensar muito?",
+   "txt": [
+    "Marcos 1:14-20",
+    "Lucas 9:18-27",
+    "João 15:1-8"
+   ],
+   "obs": "O que Jesus pede e o que ele promete a quem o segue nesses textos?",
+   "nuc": "Seguir Jesus envolve uma resposta pessoal. O discípulo começa com relacionamento, não com desempenho.",
+   "naz": "Jesus é plenamente Deus e plenamente homem. Seguir Jesus é responder com amor à graça que já recebemos, e não tentar merecer a aprovação de Deus.",
+   "aprof": "O Concílio de Calcedônia (451) confessou uma só pessoa, Jesus Cristo, em duas naturezas, divina e humana. Quem segue um Mestre que é Deus e também se fez humano pode levar a vida real até ele. Wesley descreveu o seu “coração aquecido” em Aldersgate (1738) como confiança pessoal em Cristo para salvação. A fé que salva é relacionamento, não só concordância intelectual.",
+   "es": "Ninguém pode confessar que Jesus é o Senhor sem o Espírito Santo (1 Coríntios 12:3). É ele que abre os olhos para reconhecer Jesus e torna o convite real no coração.",
+   "perg": [
+    "Que parte do “siga-me” soa como convite e que parte soa como peso?",
+    "O que hoje compete com Jesus pelo primeiro lugar na sua vida?",
+    "O que significa permanecer em Jesus numa semana comum sua?",
+    "Como posso orar por você sem transformar a oração em cobrança?"
+   ],
+   "quiz": [
+    "Segundo o manual, por onde começa o discipulado?",
+    [
+     "Pelo desempenho e pela disciplina",
+     "Pelo relacionamento com Jesus",
+     "Pelo domínio de toda a doutrina"
+    ],
+    1,
+    "Isso. O discipulado começa com relacionamento; o desempenho amadurece depois, sustentado pela graça e pelo Espírito."
+   ],
+   "des": "Escreva uma frase começando com “Eu quero seguir Jesus porque...”. Ore essa frase em voz alta todos os dias e, até o próximo encontro, leia-a para uma pessoa de confiança.",
+   "msg": "Já escreveu sua frase? Se quiser, me conta como foi escrevê-la.",
+   "disc": {
+    "conduzir": [
+     "Comece perguntando como a semana foi e ouça antes de ensinar.",
+     "Deixe o jovem dizer com as próprias palavras quem é Jesus para ele. Não corrija a resposta: pergunte “o que te faz pensar assim?”.",
+     "Mostre que Jesus convida antes de exigir. Termine pedindo que o Espírito Santo abra o coração do jovem para o convite.",
+     "Ao longo da semana, chame-o para algo concreto: um culto, um almoço, uma oração juntos. Relacionamento começa na vida."
+    ],
+    "dinamica": {
+     "nome": "Retrato de Jesus",
+     "tempo": "15 min",
+     "passos": [
+      "Cada um escreve, numa palavra, como imagina Jesus hoje.",
+      "Leiam Marcos 1:14-20 juntos e comparem a palavra escrita com o texto.",
+      "Pergunte: o que mudaria nesta semana se Jesus fosse o primeiro a ser ouvido em cada decisão?"
+     ]
+    },
+    "vida": "Convide-o para acompanhar um culto ou um momento de oração na igreja."
+   }
+  },
+  {
+   "n": 2,
+   "t": "Deus Pai, Filho e Espírito Santo",
+   "s": "Aprender a se relacionar com o Deus trino",
+   "bal": [
+    "Com quem você fala quando ora: Pai, Jesus ou Espírito Santo?",
+    "Qual dessas Pessoas parece mais distante de você?",
+    "O que muda quando você ora a cada uma delas?"
+   ],
+   "abrir": "Que imagem de Deus você carrega desde a infância? Ela combina com o Deus que Jesus mostra?",
+   "txt": [
+    "Mateus 3:13-17",
+    "Mateus 28:18-20",
+    "João 14:15-27"
+   ],
+   "obs": "Quem fala, quem age e o que cada Pessoa faz nesses textos?",
+   "nuc": "O Pai acolhe, o Filho salva e o Espírito Santo habita, convence, guia e transforma. Um só Deus se revela em três Pessoas.",
+   "naz": "Cremos em um só Deus, que se revela como Pai, Filho e Espírito Santo. A Trindade não é uma fórmula para decorar, é o retrato de um Deus que vive em amor e nos convida a entrar nessa comunhão.",
+   "aprof": "A doutrina trinitária afirma um só Deus em três Pessoas, sem confusão nem separação. Os primeiros concílios descreveram essa vida mútua como comunhão. Charles Wesley, nos hinos, cantou a Trindade como fonte de salvação e de louvor. A oração cristã é dirigida ao Pai, por meio do Filho, na força do Espírito, e isso muda o modo de orar.",
+   "es": "O Espírito Santo é Deus presente em nós. Ele ora conosco quando não sabemos orar (Romanos 8:26), dá testemunho de que somos filhos e nos conduz à comunhão com o Pai e com o Filho.",
+   "perg": [
+    "Em que situação você sentiu a presença do Espírito Santo, mesmo sem saber explicar?",
+    "Qual frase de Jesus em João 14 mais fala ao que você vive agora?",
+    "Que dúvida sobre Deus você nunca teve coragem de perguntar?",
+    "Como posso orar por você sem transformar a oração em cobrança?"
+   ],
+   "quiz": [
+    "Qual é a ideia central da doutrina da Trindade, no manual?",
+    [
+     "Três deuses que trabalham juntos",
+     "Um só Deus em três Pessoas, que vive em amor",
+     "Uma fórmula que não se pode explicar"
+    ],
+    1,
+    "Exato. Um só Deus, em três Pessoas, em comunhão de amor."
+   ],
+   "des": "Todos os dias, faça uma oração de três frases: uma de gratidão ao Pai, uma para contar seu dia a Jesus e uma pedindo direção ao Espírito Santo. Anote qual delas foi mais difícil.",
+   "msg": "Hoje fiz a oração das três frases. E você, qual delas foi a mais difícil?",
+   "disc": {
+    "conduzir": [
+     "Trabalhe a relação, não uma aula sobre a Trindade. Pergunte como ele se relaciona com cada Pessoa.",
+     "Ore com ele durante o encontro, em voz alta: dirija a oração ao Pai, por meio do Filho, no Espírito.",
+     "Se surgir dúvida doutrinária, anote, diga que vai conversar com a liderança e retome na semana seguinte.",
+     "Mostre na prática: quando ele ora, com qual Pessoa sente mais proximidade? Ensine-o a pedir ao Espírito direção antes de decidir."
+    ],
+    "dinamica": {
+     "nome": "Três cadeiras",
+     "tempo": "20 min",
+     "passos": [
+      "Coloque três cadeiras: Pai, Filho e Espírito. Cada um se senta na que representa melhor a sua oração de hoje.",
+      "Conversem sobre por que escolheram cada cadeira e como se sentem nessa relação.",
+      "Terminem orando a cada Pessoa, em ordem, pedindo algo específico."
+     ]
+    },
+    "vida": "Ore com ele no carro ou antes de uma refeição juntos, usando as três frases do desafio."
+   }
+  },
+  {
+   "n": 3,
+   "t": "Graça, pecado e arrependimento",
+   "s": "Entender a condição humana e a iniciativa graciosa de Deus",
+   "bal": [
+    "O que o pecado quebra: com Deus, com os outros e comigo?",
+    "A graça que chega antes de qualquer resposta nossa",
+    "Arrependimento como voltar para casa, não como castigo"
+   ],
+   "abrir": "Pense em uma vez em que você se afastou de Deus e voltou. O que te trouxe de volta?",
+   "txt": [
+    "Gênesis 3:1-13",
+    "Romanos 3:21-26",
+    "Tito 2:11-14"
+   ],
+   "obs": "Quem dá o primeiro passo em cada texto: a pessoa ou Deus?",
+   "nuc": "O pecado rompe o amor e escraviza. A graça preveniente alcança a pessoa antes da sua resposta e a capacita a voltar-se para Deus.",
+   "naz": "A graça de Deus vem antes da nossa resposta e sustenta toda a caminhada. A pessoa responde com fé e arrependimento, sem perder sua responsabilidade moral. Ninguém precisa contar o que ainda não está pronto para contar.",
+   "aprof": "Wesley chamou de graça preveniente (“que vai adiante”) a ação de Deus que desperta a consciência e torna possível responder. Ela não força a vontade: convida e capacita. Por isso o arrependimento é, ao mesmo tempo, dom de Deus e ato humano. A tradição wesleyana vê o pecado como transgressão consciente e também como inclinação que precisa ser curada, e a graça atua nas duas dimensões.",
+   "es": "É o Espírito que convence do pecado e da justiça (João 16:8). A graça que chega antes de nós é obra dele, e o arrependimento também. Sem o Espírito, ninguém volta para casa.",
+   "perg": [
+    "O que você já tentou fazer sozinho para consertar o que errou?",
+    "Como você percebe a diferença entre a culpa que leva a Deus e a vergonha que afasta dele?",
+    "Há algo que você ainda não entregou a Deus por achar que ele não aceitaria?",
+    "Como posso orar por você sem transformar a oração em cobrança?"
+   ],
+   "quiz": [
+    "No manual, quem dá o primeiro passo na relação com Deus?",
+    [
+     "A pessoa, com esforço próprio",
+     "Deus, pela graça preveniente",
+     "Ninguém, tudo é destino"
+    ],
+    1,
+    "Isso. A graça vem antes e capacita a resposta."
+   ],
+   "des": "Escolha uma atitude, hábito ou relação que você precisa levar à luz. Escreva em um papel e ore: “Senhor, eu volto a ti”. Depois, dê um passo concreto de volta: pedir perdão, parar algo ou pedir ajuda a uma pessoa madura.",
+   "msg": "Tenho pensado em você. Como foi levar aquilo a Deus? Posso orar por você agora?",
+   "disc": {
+    "conduzir": [
+     "Ouça a história de afastamento sem julgar. Se ele se acusar, lembre que a graça vem antes.",
+     "Diferencie culpa que leva a Deus de vergonha que afasta. Pergunte: o que você sente agora, medo ou saudade de Deus?",
+     "Não force a confissão. Deixe claro: “você pode me contar ou levar só a Deus”.",
+     "Fale da obra do Espírito: ele convence com amor, não com humilhação. Ore pedindo essa convicção."
+    ],
+    "dinamica": {
+     "nome": "Caminho de volta",
+     "tempo": "15 min",
+     "passos": [
+      "Desenhe uma linha do tempo com momentos de afastamento e de volta a Deus.",
+      "Em cada marco, pergunte quem ou o que ajudou a voltar: Deus, pessoas, a Palavra, o Espírito.",
+      "Terminem orando por um passo de volta que ele escolher."
+     ]
+    },
+    "vida": "Num dia da semana, faça uma caminhada com ele e conversem sobre o que ele está levando."
+   }
+  },
+  {
+   "n": 4,
+   "t": "Salvação e nova vida",
+   "s": "Compreender justificação, regeneração e adoção",
+   "bal": [
+    "Perdoado, nascido de novo e filho: o que cada palavra quer dizer?",
+    "O pai que corre ao encontro do filho que volta",
+    "Como a nova vida aparece na rotina?"
+   ],
+   "abrir": "Com quem você mais se parece em Lucas 15: o filho que foi embora, o que ficou ou o pai? Por quê?",
+   "txt": [
+    "Lucas 15:11-32",
+    "João 3:1-8",
+    "Efésios 2:1-10"
+   ],
+   "obs": "O que o pai oferece ao filho antes de qualquer explicação ou desculpa?",
+   "nuc": "Em Cristo, Deus perdoa, gera nova vida e recebe o crente como filho. A salvação é pela graça mediante a fé e produz uma vida obediente.",
+   "naz": "A justificação é o perdão pleno de Deus; a regeneração é o novo nascimento; a adoção nos torna filhos e filhas. O Espírito Santo confirma isso em nós, e a nova vida se mostra em obediência de amor.",
+   "aprof": "Justificação, regeneração e adoção são três faces da mesma graça. Wesley ensinava que Deus nos aceita pela fé, e que essa fé produz frutos de santidade. O “testemunho do Espírito” (Romanos 8:16) é a certeza interior de ser filho de Deus, e ela não depende de sentimentos perfeitos. O cuidado pastoral aqui é ajudar o jovem a distinguir segurança em Deus de autoconfiança.",
+   "es": "O novo nascimento é obra do Espírito (João 3:5-8). Ele regenera, adota e dá testemunho de que somos filhos de Deus. Por isso a nova vida não nasce da nossa força, mas da presença dele em nós.",
+   "perg": [
+    "O que, na sua vida, ainda funciona como condição para Deus te amar?",
+    "Que sinais de nova vida você percebe em você? O que ainda parece velho?",
+    "Em Efésios 2, o que é presente de Deus e o que é resposta nossa?",
+    "Como posso orar por você sem transformar a oração em cobrança?"
+   ],
+   "quiz": [
+    "Qual dessas palavras indica que somos recebidos como filhos?",
+    [
+     "Justificação",
+     "Adoção",
+     "Santificação"
+    ],
+    1,
+    "Adoção. Somos recebidos na família de Deus, não apenas perdoados."
+   ],
+   "des": "Por cinco dias, anote ao fim do dia uma evidência de nova vida: uma escolha, uma reação, um desejo. No último dia, releia tudo, agradeça a Deus em oração e marque uma área que ainda precisa de cuidado.",
+   "msg": "Hoje percebi nova vida em mim quando... E você, já anotou a sua?",
+   "disc": {
+    "conduzir": [
+     "Traduza justificação, regeneração e adoção com exemplos da vida dele, nunca com vocabulário pesado.",
+     "Pergunte onde ele ainda vive como quem precisa merecer o amor de Deus. Isso é mais útil do que explicar a teoria.",
+     "Confirme a segurança em Deus sem dar garantia artificial. Ore pedindo que o Espírito dê testemunho da filiação.",
+     "Peça exemplos concretos de nova vida na semana, não generalidades."
+    ],
+    "dinamica": {
+     "nome": "Carta do Pai",
+     "tempo": "20 min",
+     "passos": [
+      "Leiam Lucas 15:11-32 em voz alta, em duas partes.",
+      "Cada um escreve uma carta curta do pai ao filho que voltou, com as palavras que Deus diria a ele hoje.",
+      "Leiam em voz alta e conversem sobre o que foi mais difícil de ouvir ou de aceitar."
+     ]
+    },
+    "vida": "Combinem um café ou almoço sem assunto de estudo, só para conviver."
+   }
+  },
+  {
+   "n": 5,
+   "t": "Santidade e formação do caráter",
+   "s": "Viver uma vida inteira dedicada a Deus e em crescimento",
+   "bal": [
+    "Santidade como amor a Deus e ao próximo, não como perfeição",
+    "O fruto do Espírito e as obras da carne",
+    "Uma área da vida para entregar por inteiro"
+   ],
+   "abrir": "Quando você pensa em uma “pessoa santa”, que imagem vem à cabeça? Ela se parece com Jesus?",
+   "txt": [
+    "Romanos 12:1-2",
+    "Gálatas 5:16-25",
+    "1 Tessalonicenses 5:23-24"
+   ],
+   "obs": "O que Deus faz e o que nós fazemos nesses textos? (Veja 1 Tessalonicenses 5:24.)",
+   "nuc": "A santidade começa na conversão, alcança a inteira consagração e continua no crescimento. O amor santo molda escolhas e relações.",
+   "naz": "A santidade cristã significa amor a Deus e ao próximo. A inteira santificação não é licença para orgulho espiritual. Ela chama à consagração e à contínua maturidade.",
+   "aprof": "Wesley chamou a inteira santificação de “amor perfeito”: um coração purificado que ama a Deus e ao próximo sem divisão. Ele não ensinava ausência de erro, de fraqueza ou de tentação, nem perfeição angelical. Por isso a santidade é progressiva: começa na conversão, é recebida como graça e cresce no tempo. O jovem precisa de esperança realista e de disciplina amorosa.",
+   "es": "Não há santidade por força própria. O fruto do Espírito (amor, alegria, paz, paciência...) é o que cresce quando nos rendemos a ele (Gálatas 5:22-23). Ele é quem nos santifica por inteiro.",
+   "perg": [
+    "Em que relação ou situação o seu amor ainda tem limites? O que Jesus faria ali?",
+    "Qual fruto do Espírito você mais deseja ver crescer em você?",
+    "Existe alguma área da vida que você ainda guarda só para si?",
+    "Como posso orar por você sem transformar a oração em cobrança?"
+   ],
+   "quiz": [
+    "Segundo Wesley, como se pode descrever a inteira santificação?",
+    [
+     "Ausência total de erros",
+     "Amor perfeito, um coração purificado que ama sem divisão",
+     "Um estado sem nenhuma tentação"
+    ],
+    1,
+    "Isso. O amor perfeito é o centro. Não se trata de ausência de falhas nem de perfeição angelical."
+   ],
+   "des": "Escolha uma situação da semana que costuma te irritar (trânsito, casa, trabalho, grupo). Antes dela, ore pedindo amor ao Espírito e decida de antemão como vai responder. Depois, anote como foi.",
+   "msg": "Qual situação você escolheu? Estou orando por ela hoje.",
+   "disc": {
+    "conduzir": [
+     "Apresente a santidade como amor, não como lista de proibições. Conecte cada área da vida ao amor a Deus e ao próximo.",
+     "Escolha com ele uma área concreta para entregar ao Espírito e ore sobre ela durante o encontro.",
+     "Evite cobrança de perfeição. Diga que crescer é processo e que a dependência do Espírito é o caminho.",
+     "Acompanhe a semana com interesse por uma situação específica, não só com “como foi?”."
+    ],
+    "dinamica": {
+     "nome": "Termômetro do fruto",
+     "tempo": "15 min",
+     "passos": [
+      "Liste no quadro os nove frutos do Espírito (Gálatas 5:22-23).",
+      "Cada um marca de 0 a 10 como tem vivido cada fruto nesta semana.",
+      "Escolham o fruto mais baixo e definam juntos um gesto prático para cultivá-lo, pedindo ao Espírito que o produza."
+     ]
+    },
+    "vida": "Se houver abertura, vá com ele resolver um conflito pequeno da semana, em oração antes e depois."
+   }
+  },
+  {
+   "n": 6,
+   "t": "Bíblia, oração e jejum",
+   "s": "Praticar meios de graça de modo simples e constante",
+   "bal": [
+    "Como você lê a Bíblia hoje e o que atrapalha?",
+    "Oração como conversa, não como obrigação",
+    "Jejum: o que ele é e o que ele não é?"
+   ],
+   "abrir": "Em que momento do seu dia você mais consegue ficar a sós com Deus? O que mais atrapalha?",
+   "txt": [
+    "Salmo 119:9-16",
+    "Mateus 6:5-18",
+    "Atos 2:42-47"
+   ],
+   "obs": "Qual é o motivo certo para ler, orar e jejuar nesses textos? E o motivo errado?",
+   "nuc": "A Palavra orienta, a oração aprofunda a comunhão e o jejum reorganiza desejos diante de Deus. Nenhuma prática compra o favor divino.",
+   "naz": "Apresente esses meios como caminhos para encontrar Deus, não como lista de tarefas. Ofereça alternativas seguras e nunca incentive abstinência de comida a quem tem restrição de saúde.",
+   "aprof": "Wesley chamou esses caminhos de meios de graça: oração, leitura das Escrituras, jejum, comunhão cristã e Ceia do Senhor. Eles não nos tornam merecedores; são os lugares onde Deus nos encontra. As obras de misericórdia (cuidar de quem sofre, visitar, repartir) mantêm a fé ligada ao amor. O jejum é uma escolha livre e cuidadosa, sempre sob orientação quando a saúde for frágil.",
+   "es": "A Palavra foi inspirada pelo Espírito, e é ele quem ensina, lembra e aplica a Escritura (João 14:26). Na oração, o Espírito intercede por nós quando não sabemos o que pedir (Romanos 8:26).",
+   "perg": [
+    "Quando você ora, você fala, escuta ou só pede? O que gostaria de mudar?",
+    "O que Jesus quer dizer com “o seu Pai, que vê em secreto”?",
+    "Que hábito você poderia pausar por um tempo para abrir espaço para Deus?",
+    "Como posso orar por você sem transformar a oração em cobrança?"
+   ],
+   "quiz": [
+    "Qual é o sentido dos meios de graça?",
+    [
+     "Comprar o favor de Deus com disciplina",
+     "Caminhos pelos quais Deus nos encontra, sem nos tornar merecedores",
+     "Obrigações que, se falharmos, nos afastam de Deus"
+    ],
+    1,
+    "Isso. A graça vem antes; as práticas são lugares de encontro."
+   ],
+   "des": "Por cinco dias, no mesmo horário, leia um trecho curto da Bíblia, anote uma frase e transforme-a em oração. Em um desses dias, troque uma hora de redes sociais ou uma refeição (se a saúde permitir) por esse tempo com Deus.",
+   "msg": "A frase que anotei hoje foi... Qual foi a sua?",
+   "disc": {
+    "conduzir": [
+     "Pergunte o que atrapalha, não o que falta. Comece com um trecho curto, sem metas irreais.",
+     "Modele a oração: ore em voz alta durante o encontro, de forma simples e pessoal.",
+     "Quando falar de jejum, lembre o cuidado com a saúde e ofereça alternativas seguras.",
+     "Lembre que Palavra e oração são caminhos de encontro com o Espírito, que ensina e ilumina."
+    ],
+    "dinamica": {
+     "nome": "Leitura orante",
+     "tempo": "20 min",
+     "passos": [
+      "Leiam Salmo 119:9-16 duas vezes, em voz alta.",
+      "Cada um destaca uma frase que chamou atenção e a transforma em oração de uma frase.",
+      "Oram juntos, cada um lendo a própria oração em voz alta."
+     ]
+    },
+    "vida": "Façam juntos um tempo de oração antes de um compromisso importante da semana."
+   }
+  },
+  {
+   "n": 7,
+   "t": "Escolhas, tentações e domínio próprio",
+   "s": "Discernir influências e responder ao pecado com a graça",
+   "bal": [
+    "Escolhas pequenas que formam o caráter",
+    "Tentação não é pecado: como reconhecer os gatilhos?",
+    "Quem pode te ajudar quando a tentação aperta?"
+   ],
+   "abrir": "Quais influências (pessoas, conteúdos, lugares) mais pesam nas suas decisões hoje?",
+   "txt": [
+    "Deuteronômio 30:15-20",
+    "1 Coríntios 10:12-13",
+    "1 Pedro 5:8-9"
+   ],
+   "obs": "Que escolha cada texto coloca diante de nós e que ajuda Deus promete?",
+   "nuc": "A liberdade humana é real, mas foi ferida pelo pecado. A graça capacita a escolher a vida, pedir ajuda e praticar domínio próprio.",
+   "naz": "Ser tentado não é pecar. A graça de Deus nos capacita a resistir, e ele sempre providencia uma saída. Pedir ajuda também faz parte da vida santa.",
+   "aprof": "Wesley distinguia tentação de pecado: sofrer a tentação não é consentir com ela. Jesus foi tentado sem pecar (Hebreus 4:15). O domínio próprio é fruto do Espírito (Gálatas 5:23), não força de vontade isolada. Quem enfrenta padrões de dependência, abuso ou risco precisa de apoio profissional e da liderança, e não apenas de mais esforço.",
+   "es": "Não vencemos a tentação só com força de vontade. O Espírito dá domínio próprio, mostra a saída que Deus providencia e nos leva a pedir ajuda a outras pessoas.",
+   "perg": [
+    "Qual tentação volta com mais frequência? Em que momento do dia ou da semana?",
+    "Em 1 Coríntios 10:13, que saída Deus costuma oferecer? Você já viu uma?",
+    "Quem sabe dessa sua luta? Quem poderia saber?",
+    "Como posso orar por você sem transformar a oração em cobrança?"
+   ],
+   "quiz": [
+    "No manual, tentação é a mesma coisa que pecado?",
+    [
+     "Sim, sempre",
+     "Não. Ser tentado não é pecar, e Deus providencia saída",
+     "Depende do dia"
+    ],
+    1,
+    "Isso. O consentimento faz diferença; a tentação em si não é pecado."
+   ],
+   "des": "Escolha uma tentação recorrente e complete três linhas: o gatilho (quando acontece), a saída (o que farei no lugar) e a pessoa (a quem vou pedir ajuda). Converse com essa pessoa e combine como vai pedir ajuda.",
+   "msg": "Sua saída funcionou esta semana? Em que posso te ajudar?",
+   "disc": {
+    "conduzir": [
+     "Ajude-o a nomear os gatilhos sem exigir detalhes íntimos. Pergunte: quando acontece, o que você faz, quem pode ajudar?",
+     "Reforce que tentação não é pecado e que Deus providencia saída (1 Coríntios 10:13).",
+     "Se surgirem sinais de dependência, abuso ou risco, siga a avaliação pastoral e envolva a liderança.",
+     "Peça ao jovem que ore pedindo domínio próprio durante a semana, sabendo que é fruto do Espírito."
+    ],
+    "dinamica": {
+     "nome": "Mapa dos gatilhos",
+     "tempo": "20 min",
+     "passos": [
+      "Desenhem um mapa com o centro “Eu” e os gatilhos ao redor: pessoas, lugares, horários, telas.",
+      "Marquem com uma cor os gatilhos que mais aparecem.",
+      "Para cada um, escolham uma saída concreta e uma pessoa de confiança para pedir ajuda."
+     ]
+    },
+    "vida": "Combine um canal de apoio para os momentos difíceis, como uma mensagem em horário combinado."
+   }
+  },
+  {
+   "n": 8,
+   "t": "Igreja, comunhão e dons",
+   "s": "Pertencer ao corpo de Cristo e servir com responsabilidade",
+   "bal": [
+    "O que a igreja é para você: evento, lugar ou família?",
+    "Dons e talentos: o que as pessoas já veem em você?",
+    "Um jeito concreto de servir sem buscar reconhecimento"
+   ],
+   "abrir": "Quem te recebeu bem quando você chegou à igreja? O que essa pessoa fez que ficou na sua memória?",
+   "txt": [
+    "Atos 2:42-47",
+    "1 Coríntios 12:4-27",
+    "Efésios 4:1-16"
+   ],
+   "obs": "O que as pessoas faziam juntas? O que cada parte do corpo faz pelas outras?",
+   "nuc": "A fé cristã não é uma jornada isolada. O Espírito distribui dons para edificação, e a igreja forma pessoas para a missão.",
+   "naz": "A igreja existe para anunciar a salvação, formar discípulos e servir o mundo. Doutrina sem amor perde sua finalidade.",
+   "aprof": "Wesley organizou seus seguidores em “classes” e “bandas”, pequenos grupos de prestação de contas e cuidado mútuo. A santidade era vivida em comunidade. Os dons do Espírito, segundo Paulo, são para edificação, e não para destaque pessoal. Quem serve sem buscar aplausos aprende a humildade que sustenta o amor cristão.",
+   "es": "A igreja é o corpo animado pelo Espírito. Ele distribui os dons (1 Coríntios 12:4-11), une as pessoas e nos faz servir uns aos outros. Sem o Espírito, a comunhão vira apenas costume.",
+   "perg": [
+    "Em que momentos você se sente parte da igreja? E em quais se sente de fora?",
+    "O que as pessoas costumam procurar em você? Pode ser um dom?",
+    "Onde há uma necessidade na igreja ou no grupo que você poderia suprir?",
+    "Como posso orar por você sem transformar a oração em cobrança?"
+   ],
+   "quiz": [
+    "Para que os dons do Espírito são dados, segundo 1 Coríntios 12?",
+    [
+     "Para destacar quem os recebe",
+     "Para edificação do corpo",
+     "Para dividir a igreja em níveis"
+    ],
+    1,
+    "Isso. Os dons servem ao corpo."
+   ],
+   "des": "Escolha uma tarefa pequena e discreta na igreja ou no grupo: chegar cedo para ajudar a arrumar, recepcionar alguém novo, ficar para guardar o que sobrou. Faça sem avisar ninguém e conte ao seu discipulador o que sentiu.",
+   "msg": "Já escolheu sua tarefa? Posso te acompanhar nesse dia.",
+   "disc": {
+    "conduzir": [
+     "Pergunte o que a igreja significa para ele e ouça a resposta com respeito.",
+     "Ajude-o a descobrir os próprios dons pela observação: o que as pessoas já reconhecem nele?",
+     "Incentive um serviço discreto e concreto. Confira depois como foi, sem cobrança.",
+     "Mostre que o Espírito dá dons para o bem de todos, e não para destaque pessoal."
+    ],
+    "dinamica": {
+     "nome": "Mapa de dons",
+     "tempo": "15 min",
+     "passos": [
+      "Cada um escreve três coisas que as pessoas já elogiam em si e três coisas que faz com prazer.",
+      "Comparem e procurem sobreposições: esses são dons prováveis.",
+      "Escolham um lugar da igreja para testar um desses dons nas próximas semanas."
+     ]
+    },
+    "vida": "Sirvam juntos numa tarefa da igreja ou do grupo, como arrumar o espaço ou recepcionar."
+   }
+  },
+  {
+   "n": 9,
+   "t": "Relacionamentos, perdão e testemunho",
+   "s": "Expressar o amor de Cristo nas relações reais",
+   "bal": [
+    "As relações em que o evangelho mais precisa aparecer",
+    "Perdoar e manter limites: o que é uma coisa e o que é outra?",
+    "Um testemunho que cabe numa conversa comum"
+   ],
+   "abrir": "Em qual relação (família, amizade, igreja, trabalho) o amor de Cristo está mais sendo testado em você?",
+   "txt": [
+    "Mateus 5:1-12",
+    "Efésios 4:25-32",
+    "Colossenses 3:12-17"
+   ],
+   "obs": "O que Jesus e Paulo pedem que a gente deixe para trás e o que pedem que a gente vista?",
+   "nuc": "O evangelho alcança conversas, conflitos, família, amizades e redes sociais. Perdoar não elimina limites, mas interrompe a vingança.",
+   "naz": "O amor a Deus e ao próximo é o centro da vida cristã, e a santidade se mostra nas relações: nas palavras, no perdão e no cuidado. Perdoar não é continuar exposto a dano.",
+   "aprof": "Wesley escreveu um sermão sobre o “espírito católico” (1750), no qual pede um amor que une cristãos de diferentes opiniões sem exigir uniformidade. Perdão é resposta à graça recebida (Efésios 4:32), mas reconciliação é outra coisa: exige arrependimento de quem feriu e segurança para quem foi ferido. Em situações de abuso ou risco, o perdão não obriga a voltar a conviver, e a liderança e os serviços competentes devem ser acionados.",
+   "es": "Só o Espírito derrama o amor de Deus em nosso coração (Romanos 5:5). Perdoar e amar nas relações difíceis é impossível sem ele, e o testemunho nasce de uma vida que ele transforma.",
+   "perg": [
+    "Que conversa difícil você tem adiado? O que te impede?",
+    "O que, para você, é perdoar? E o que não é?",
+    "Como você aparece nas redes sociais? Quem vê Jesus por lá?",
+    "Como posso orar por você sem transformar a oração em cobrança?"
+   ],
+   "quiz": [
+    "Perdoar sempre significa voltar a conviver da mesma forma?",
+    [
+     "Sim, sempre",
+     "Não. O perdão pode existir com limites, principalmente em caso de abuso ou risco",
+     "Só se a pessoa pedir desculpas por escrito"
+    ],
+    1,
+    "Isso. Perdão e limite podem andar juntos, e a segurança vem primeiro."
+   ],
+   "des": "Escolha uma relação com mágoa ou distância e dê um passo possível: orar pela pessoa todos os dias, mandar uma mensagem sincera ou pedir perdão. Se houver abuso ou risco, não se exponha: converse antes com a liderança.",
+   "msg": "Qual passo você escolheu? Quer ensaiar comigo o que vai dizer?",
+   "disc": {
+    "conduzir": [
+     "Ouça as relações difíceis sem apressar o perdão. Pergunte o que é perdoar para ele e o que não é.",
+     "Separe perdão de convivência: é possível perdoar e manter limites. Em caso de abuso ou risco, envolva a liderança imediatamente.",
+     "Se ele quiser, ensaie com ele a conversa difícil. Ore pela pessoa antes de falar.",
+     "Lembre que o amor que perdoa vem do Espírito, que derrama o amor de Deus em nós."
+    ],
+    "dinamica": {
+     "nome": "Ensaio da conversa",
+     "tempo": "20 min",
+     "passos": [
+      "Escolham juntos uma conversa difícil real (sem envolver abuso ou risco).",
+      "Um faz o papel da outra pessoa; o outro ensaia uma frase de cuidado e uma de limite.",
+      "Revisem: o que foi firme e o que foi gentil? Orem pela pessoa."
+     ]
+    },
+    "vida": "Vivam juntos um momento simples, como uma refeição ou uma caminhada, para ele ver o testemunho acontecer na prática."
+   }
+  },
+  {
+   "n": 10,
+   "t": "Chamado, serviço e multiplicação",
+   "s": "Assumir uma vida de missão e preparar outros discípulos",
+   "bal": [
+    "O que mudou em você desde o primeiro encontro?",
+    "Seu chamado agora: servir, cuidar, ir",
+    "Quem pode caminhar com você e quem você pode acompanhar?"
+   ],
+   "abrir": "Olhando para trás, qual conversa ou prática deste percurso mais marcou você?",
+   "txt": [
+    "Mateus 28:18-20",
+    "Atos 1:6-11",
+    "2 Timóteo 2:1-2"
+   ],
+   "obs": "O que Jesus manda fazer e que promessa ele dá a quem vai? Quem ensina quem em 2 Timóteo 2:2?",
+   "nuc": "Todo discípulo participa da missão. O objetivo do percurso é amar Jesus, servir pessoas e ajudar outros a caminharem com Cristo.",
+   "naz": "A missão da Igreja do Nazareno é fazer discípulos semelhantes a Cristo em todas as nações. Todo cristão, e não só os líderes, é enviado: onde vive, estuda e trabalha.",
+   "aprof": "Wesley escreveu que via o mundo como sua paróquia (1739). A multiplicação segue o padrão de 2 Timóteo 2:2: o que foi recebido é confiado a outros fiéis, que ensinarão ainda outros. Preparar discípulos é o último passo do percurso e também seu novo começo. Encerrar bem significa sair do papel de quem é cuidado para o de quem cuida, com humildade.",
+   "es": "A missão é do Espírito. Ele dá poder para testemunhar (Atos 1:8) e envia cada discípulo a fazer outros discípulos. Sem ele, o envio vira esforço; com ele, vira vida que se multiplica.",
+   "perg": [
+    "O que você aprendeu sobre Deus, sobre você e sobre a igreja nestes encontros?",
+    "Que dom ou paixão sua poderia servir a alguém ainda esta semana?",
+    "Quem na sua rede precisa de alguém que caminhe com ele?",
+    "Como posso orar por você sem transformar a oração em cobrança?"
+   ],
+   "quiz": [
+    "Segundo 2 Timóteo 2:2, como o discipulado se multiplica?",
+    [
+     "Por um só líder carismático",
+     "Pela fidelidade em confiar o que se recebeu a outros que ensinarão",
+     "Por eventos grandes e espetaculares"
+    ],
+    1,
+    "Isso. Multiplicação é fidelidade passada adiante."
+   ],
+   "des": "Escolha uma pessoa e faça três coisas nesta semana: ore por ela todos os dias, sirva-a de um jeito concreto e convide-a para um café, uma conversa ou um culto. Depois, conte ao discipulador como foi.",
+   "msg": "Quem você escolheu? Como posso te ajudar a fazer o convite?",
+   "disc": {
+    "conduzir": [
+     "Revise com ele o caminho dos dez encontros: o que mudou, o que aprendeu sobre Deus e sobre si.",
+     "Pergunte quem ele pode começar a acompanhar. Ajude-o a dar um primeiro passo concreto e pequeno.",
+     "Celebre com gratidão e mostre que o Espírito continua conduzindo depois do percurso.",
+     "Combine a continuidade com a liderança: acompanhamento, equipe de serviço ou novo percurso."
+    ],
+    "dinamica": {
+     "nome": "Linha da vida com envio",
+     "tempo": "20 min",
+     "passos": [
+      "Desenhem uma linha com os marcos do percurso e escrevam em cada um o que Deus fez.",
+      "Cada um escreve uma carta curta com o que quer dizer ao outro e ao grupo.",
+      "Terminem com oração de envio, pedindo que o Espírito conduza cada passo."
+     ]
+    },
+    "vida": "Escolham juntos uma pessoa para acompanhar nas próximas semanas, com você ao lado no começo."
+   }
+  }
+ ],
+ "BLOCOS": {
+  "1": [
+   "Conhecendo Jesus",
+   "#2ec4f2"
+  ],
+  "2": [
+   "Conhecendo Jesus",
+   "#2ec4f2"
+  ],
+  "3": [
+   "Conhecendo Jesus",
+   "#2ec4f2"
+  ],
+  "4": [
+   "Caminhando com Jesus",
+   "#2456f0"
+  ],
+  "5": [
+   "Caminhando com Jesus",
+   "#2456f0"
+  ],
+  "6": [
+   "Caminhando com Jesus",
+   "#2456f0"
+  ],
+  "7": [
+   "Caminhando com Jesus",
+   "#2456f0"
+  ],
+  "8": [
+   "Vivendo como Jesus",
+   "#f26a1b"
+  ],
+  "9": [
+   "Vivendo como Jesus",
+   "#f26a1b"
+  ],
+  "10": [
+   "Vivendo como Jesus",
+   "#f26a1b"
+  ]
+ },
+ "PILARES_DISC": [
+  [
+   "Vida na vida",
+   "Discipulado acontece na convivência: mesa, caminhada, tempo juntos e gente real. Seu encontro semanal é só uma parte."
+  ],
+  [
+   "Sua relação com Deus",
+   "Você conduz outro discípulo, não dá uma aula. Sua vida de oração e de Palavra é o primeiro material que ele vê."
+  ],
+  [
+   "Dependência do Espírito",
+   "Você não converte nem santifica ninguém. Oriente o jovem a depender do Espírito Santo e ore para que ele mesmo conduza a conversa."
+  ]
+ ],
+ "AREAS": [
+  [
+   "Relacionamento com Jesus",
+   "Fala com sinceridade sobre fé, dúvidas e decisões",
+   "Aprofundar práticas de comunhão",
+   "#2ec4f2"
+  ],
+  [
+   "Bíblia e oração",
+   "Consegue manter uma prática simples e retomar quando falha",
+   "Simplificar a rotina e acompanhar",
+   "#2456f0"
+  ],
+  [
+   "Caráter e relacionamentos",
+   "Reconhece erros e procura respostas coerentes com o amor",
+   "Trabalhar perdão, limites e responsabilidade",
+   "#2456f0"
+  ],
+  [
+   "Igreja e serviço",
+   "Participa e identifica formas saudáveis de servir",
+   "Conectar com uma equipe",
+   "#f26a1b"
+  ],
+  [
+   "Multiplicação",
+   "Demonstra interesse em cuidar de outra pessoa",
+   "Oferecer supervisão e novo percurso",
+   "#f26a1b"
+  ]
+ ],
+ "NVI_ID": "129",
+ "LIVRO_YV": {
+  "Gênesis": "GEN",
+  "Deuteronômio": "DEU",
+  "Salmo": "PSA",
+  "Mateus": "MAT",
+  "Marcos": "MRK",
+  "Lucas": "LUK",
+  "João": "JHN",
+  "Atos": "ACT",
+  "Romanos": "ROM",
+  "1 Coríntios": "1CO",
+  "Efésios": "EPH",
+  "Gálatas": "GAL",
+  "Colossenses": "COL",
+  "1 Tessalonicenses": "1TH",
+  "2 Timóteo": "2TI",
+  "Tito": "TIT",
+  "Hebreus": "HEB",
+  "1 Pedro": "1PE"
+ }
+}
