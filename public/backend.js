@@ -128,7 +128,8 @@ async function api(path, opts = {}) {
       const p = await perfilDe(u.id);
       const out = {
         usuario: publico(p),
-        capacidades: {
+        pendente: !!p.pendente,
+        capacidades: p.pendente ? { curso: false, conduzir: false, admin: false } : {
           curso: p.papel !== 'admin' || !!p.duplo,
           conduzir: p.papel === 'discipulador' || (p.papel === 'admin' && !!p.duplo),
           admin: p.papel === 'admin'
@@ -139,6 +140,12 @@ async function api(path, opts = {}) {
         if (d && d.discipulador_id) out.discipulador = publico(await perfilDe(d.discipulador_id));
       }
       return out;
+    }
+
+    if (path === '/api/escolher-papel' && m === 'POST') {
+      const { error } = await sb.rpc('escolher_papel', { p_papel: body.papel, p_codigo: body.codigo || '' });
+      if (error) throw traduzirErro(error);
+      return { ok: true };
     }
 
     if (path === '/api/meu-progresso' && m === 'GET') { const u = await usuarioLogado(); return progressoDe(u.id); }

@@ -191,6 +191,7 @@ export default function Home() {
   const { carregando, usuario, modoAtual } = useSessao();
   if (carregando) return <Carregando />;
   if (!usuario) return <Redirect href="/login" />;
+  if (usuario.pendente) return <Redirect href="/escolher" />;
   return (
     <ScrollView contentContainerStyle={estilos.pagina}>
       <Seletor />

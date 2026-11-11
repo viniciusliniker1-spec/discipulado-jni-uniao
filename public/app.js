@@ -20,7 +20,7 @@ async function carregarMe() {
   S.progOk = false; S.prog = {};
   try {
     const me = await api('/api/me');
-    S.me = me.usuario; S.discipulador = me.discipulador || null; S.caps = me.capacidades || {};
+    S.me = me.usuario; S.pendente = !!me.pendente; S.discipulador = me.discipulador || null; S.caps = me.capacidades || {};
   } catch (e) { S.me = null; S.caps = {}; }
 }
 // Modos disponíveis conforme a conta: discípulo (curso), discipulador (conduzir) e administração
@@ -71,6 +71,8 @@ async function route(keep) {
     }
     if (!S.me) {
       html = viewLogin(h);
+    } else if (S.pendente) {
+      html = viewEscolher();
     } else if (P === 'admin') {
       html = await viewAdmin(); side = sideAdmin();
     } else if (/^enc-\d+$/.test(h)) {
@@ -148,6 +150,26 @@ function sideDisc(cur) {
 function sideAdmin() { return '<a href="#admin" class="on"><span class="num" style="background:var(--or);color:#fff">A</span>Administração</a>'; }
 
 /* ---------- login ---------- */
+// Conta criada pelo Google: a pessoa escolhe o caminho uma única vez
+function viewEscolher() {
+  const p = S.papelEsc || 'aluno';
+  return `
+  <section class="login">
+    <div class="card" style="padding:26px">
+      ${CHEV}
+      <h1>Bem-vindo${S.me && S.me.nome ? ', ' + esc(S.me.nome.split(' ')[0]) : ''}!</h1>
+      <p class="muted">Antes de começar, diga qual é o seu caminho. Essa escolha é feita uma única vez.</p>
+      <div class="tabs">
+        <button class="tab ${p === 'aluno' ? 'on' : ''}" data-act="papel-esc" data-v="aluno">Discípulo</button>
+        <button class="tab ${p === 'discipulador' ? 'on' : ''}" data-act="papel-esc" data-v="discipulador">Discipulador</button>
+      </div>
+      ${p === 'discipulador' ? `<label>Código de discipulador<input id="cod-esc" autocomplete="off"></label>` : ''}
+      <div id="erro-esc" class="erro"></div>
+      <button class="btn" data-act="confirmar-papel">Continuar</button>
+    </div>
+  </section>`;
+}
+
 function viewLogin(h) {
   const erro = h === 'login-erro' ? 'Não foi possível entrar com Google. Tente de novo ou use e-mail e senha.'
     : h === 'login-codigo' ? 'Código de discipulador inválido. Peça o código à liderança.' : '';
@@ -529,6 +551,14 @@ document.addEventListener('click', async ev => {
   if (a === 'dia') { const n = +location.hash.slice(5), e = garantirEnc(n), i = +el.dataset.i; e.dias[i] = !e.dias[i]; salvarEncAluno(n); return route(true); }
   if (a === 'done') { const n = +el.dataset.n, e = garantirEnc(n); e.done = !e.done; await api('/api/meu-progresso/' + n, { method: 'PUT', body: e }).catch(() => {}); toast(e.done ? 'Encontro concluído' : 'Conclusão desfeita'); return route(true); }
   if (a === 'papel') { S.papelCad = el.dataset.v; return route(true); }
+  if (a === 'papel-esc') { S.papelEsc = el.dataset.v; return route(true); }
+  if (a === 'confirmar-papel') {
+    const papel = S.papelEsc || 'aluno', cod = (document.getElementById('cod-esc') || {}).value || '';
+    if (papel === 'discipulador' && !cod.trim()) { document.getElementById('erro-esc').textContent = 'Digite o código de discipulador.'; return; }
+    try { await api('/api/escolher-papel', { method: 'POST', body: { papel, codigo: cod.trim() } }); S.pendente = false; await carregarMe(); location.hash = '#home'; route(false); }
+    catch (e) { document.getElementById('erro-esc').textContent = e.message || 'Não foi possível salvar sua escolha.'; }
+    return;
+  }
 });
 
 document.addEventListener('change', async ev => {

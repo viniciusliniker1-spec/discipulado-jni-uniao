@@ -11,6 +11,7 @@ const MSG: Record<string, string> = {
 function traduzir(e: any): ErroApp {
   const msg = (e && (e.message || e.error_description)) || 'Erro';
   if (/Database error saving new user/i.test(msg)) return new ErroApp('Não foi possível criar a conta. Confira o código de discipulador.');
+  if (/codigo_invalido/i.test(msg)) return new ErroApp('Código de discipulador inválido. Peça o código à liderança.');
   if (/email rate limit/i.test(msg)) return new ErroApp('Muitas tentativas de e-mail. Aguarde cerca de uma hora e tente de novo.');
   return new ErroApp(MSG[msg] || msg);
 }
@@ -52,7 +53,7 @@ export function semanasDe(dias: string[]): number[] {
   return out.reverse();
 }
 
-export type Perfil = { id: string; nome: string; email: string; papel: 'aluno' | 'discipulador' | 'admin'; duplo?: boolean };
+export type Perfil = { id: string; nome: string; email: string; papel: 'aluno' | 'discipulador' | 'admin'; duplo?: boolean; pendente?: boolean };
 
 export const api = {
   async entrar(email: string, senha: string) {
@@ -69,19 +70,26 @@ export const api = {
     if (!data.session) throw new ErroApp('Conta criada. Confirme o e-mail e depois entre (ou desative a confirmação no Supabase).');
   },
   async sair() { await supabase.auth.signOut(); },
+  // Conta criada pelo Google: o próprio usuário escolhe o perfil (uma única vez)
+  async escolherPapel(papel: 'aluno' | 'discipulador', codigo: string) {
+    const { error } = await supabase.rpc('escolher_papel', { p_papel: papel, p_codigo: codigo });
+    if (error) throw traduzir(error);
+  },
 
   async eu(): Promise<{ usuario: Perfil; caps: { curso: boolean; conduzir: boolean; admin: boolean }; discipulador: Perfil | null } | null> {
     const { data } = await supabase.auth.getSession();
     const u = data.session && data.session.user;
     if (!u) return null;
-    const { data: p, error } = await supabase.from('perfis').select('id,nome,email,papel,duplo').eq('id', u.id).maybeSingle();
+    const { data: p, error } = await supabase.from('perfis').select('id,nome,email,papel,duplo,pendente').eq('id', u.id).maybeSingle();
     if (error) throw traduzir(error);
     if (!p) return null;
-    const caps = {
-      curso: p.papel !== 'admin' || !!p.duplo,
-      conduzir: p.papel === 'discipulador' || (p.papel === 'admin' && !!p.duplo),
-      admin: p.papel === 'admin',
-    };
+    const caps = p.pendente
+      ? { curso: false, conduzir: false, admin: false }
+      : {
+          curso: p.papel !== 'admin' || !!p.duplo,
+          conduzir: p.papel === 'discipulador' || (p.papel === 'admin' && !!p.duplo),
+          admin: p.papel === 'admin',
+        };
     let discipulador: Perfil | null = null;
     if (p.papel === 'aluno') {
       const { data: d } = await supabase.from('designacoes').select('discipulador_id').eq('aluno_id', u.id).maybeSingle();
