@@ -249,7 +249,20 @@ async function api(path, opts = {}) {
       const u = await usuarioLogado();
       const p = await perfilDe(u.id);
       if (p.papel !== 'admin') throw erro('Somente o administrador.', 403);
-      const { error } = await sb.from('designacoes').upsert({ aluno_id: b.alunoId, discipulador_id: b.discipuladorId || null }, { onConflict: 'aluno_id' });
+      const { error } = await sb.rpc('designar_discipulador', { p_aluno: b.alunoId, p_disc: b.discipuladorId || null });
+      if (error) throw traduzirErro(error);
+      return { ok: true };
+    }
+
+    if (path === '/api/avisos' && m === 'GET') {
+      const u = await usuarioLogado();
+      const { data, error } = await sb.from('avisos').select('id,texto,criado_em').eq('destinatario_id', u.id).eq('lido', false).order('criado_em', { ascending: false }).limit(20);
+      if (error) throw traduzirErro(error);
+      return data || [];
+    }
+    mm = path.match(/^\/api\/avisos\/(\d+)\/lido$/);
+    if (mm && m === 'POST') {
+      const { error } = await sb.from('avisos').update({ lido: true }).eq('id', +mm[1]);
       if (error) throw traduzirErro(error);
       return { ok: true };
     }

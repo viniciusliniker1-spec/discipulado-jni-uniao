@@ -42,6 +42,12 @@ function papelAtivo() {
 function modoBar(P) {
   return '<div class="tabs modo">' + modosDisponiveis().map(m => '<button class="' + (m === P ? 'on' : '') + '" data-act="modo" data-v="' + m + '">' + MODOS[m] + '</button>').join('') + '</div>';
 }
+function avisosHTML(lista) {
+  if (!lista.length) return '';
+  return '<div class="sec">' + CHEV + '<h2>Avisos</h2></div>' + lista.map(a =>
+    '<div class="card aviso"><div><b>' + esc(a.texto) + '</b><p class="note" style="margin:4px 0 0">' + dataBR(a.criado_em.slice(0, 10)) + '</p></div>' +
+    '<button class="btn ghost" data-act="aviso-ok" data-id="' + a.id + '">Entendi</button></div>').join('');
+}
 function semanasHTML(arr) {
   const s = arr || [0, 0, 0, 0, 0, 0, 0, 0];
   return '<div class="semanas" role="img" aria-label="Dias ativos nas últimas 8 semanas">' + s.map((v, i) =>
@@ -91,6 +97,10 @@ async function route(keep) {
     } else {
       html = P === 'aluno' ? viewHomeAluno() : await viewHomeDisc();
       side = P === 'aluno' ? sideAluno('home') : sideDisc('home');
+    }
+    if (S.me && P !== 'admin' && (h === 'home' || h === '')) {
+      const avisos = await api('/api/avisos').catch(() => []);
+      html = avisosHTML(avisos) + html;
     }
     if (S.me && modosDisponiveis().length > 1) html = modoBar(P) + html;
   } catch (e) {
@@ -216,11 +226,18 @@ function viewHomeAluno() {
   <div class="sec">${CHEV}<h2>Seu caminho</h2></div>
   ${mapaAluno()}`;
 }
+function painelDiscipulo(d) {
+  return '<div class="card"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>' + esc(d.nome) + '</b><a href="#d-' + d.id + '" style="font-weight:700">Acompanhar →</a></div>' +
+    '<p class="note" style="margin:4px 0 8px">' + statusAtividade(d.ultimaAtividade, d.diasAtivos7) + ' · última: ' + dataBR(d.ultimaAtividade) + '</p>' +
+    '<p style="margin:0 0 6px"><b>Encontros concluídos</b></p>' + barraProg(d.concluidos) +
+    '<div style="margin-top:12px">' + matrizEncontros(d.encontros) + '</div>' +
+    '<p style="margin:14px 0 6px"><b>Atividade nas últimas 8 semanas</b></p>' + semanasHTML(d.semanas) + '</div>';
+}
 async function viewHomeDisc() {
-  const r = await api('/api/meus-discipulos').catch(() => ({ discipulos: [] }));
+  const r = await api('/api/relatorio/discipulador').catch(() => ({ discipulos: [] }));
   S.discipulos = r.discipulos;
   const lista = S.discipulos.length
-    ? S.discipulos.map(d => '<a href="#d-' + d.id + '"><span>' + esc(d.nome) + '<br><small>' + esc(d.email) + '</small></span><span>→</span></a>').join('')
+    ? S.discipulos.map(painelDiscipulo).join('')
     : '<p class="note">Nenhum discípulo designado ainda. A liderança faz essa indicação.</p>';
   return `
   <section class="hero">
@@ -231,8 +248,8 @@ async function viewHomeDisc() {
   </section>
   <div class="sec">${CHEV}<h2>Três pilares</h2></div>
   ${PILARES_DISC.map(p => '<div class="card"><b>' + esc(p[0]) + '</b><p style="margin:6px 0 0">' + esc(p[1]) + '</p></div>').join('')}
-  <div class="sec">${CHEV}<h2>Meus discípulos</h2></div>
-  <div class="lista">${lista}</div>
+  <div class="sec">${CHEV}<h2>Progresso dos meus discípulos</h2></div>
+  ${lista}
   <div class="sec">${CHEV}<h2>Manual</h2></div>
   <div class="map">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => '<a class="mapcard" href="#enc-' + n + '"><span class="num" style="background:' + BLOCOS[n][1] + ';width:34px;height:34px;font-size:1rem">' + n + '</span><div style="flex:1"><b>' + esc(ENC[n - 1].t) + '</b><small>Como conduzir este encontro</small></div></a>').join('')}</div>`;
 }
@@ -450,7 +467,7 @@ async function viewAdmin() {
   const discs = r.usuarios.filter(u => u.papel === 'discipulador');
   const linhas = r.usuarios.filter(u => u.papel !== 'admin').map(u => {
     const sel = u.papel === 'aluno'
-      ? '<select data-act="atribuir" data-id="' + u.id + '"><option value="">— sem discipulador —</option>' + discs.map(d => '<option value="' + d.id + '" ' + (u.discipuladorId === d.id ? 'selected' : '') + '>' + esc(d.nome) + '</option>').join('') + '</select>'
+      ? '<select id="sel-' + u.id + '"><option value="">— sem discipulador —</option>' + discs.map(d => '<option value="' + d.id + '" ' + (u.discipuladorId === d.id ? 'selected' : '') + '>' + esc(d.nome) + '</option>').join('') + '</select> <button class="btn" data-act="designar" data-id="' + u.id + '">Designar</button>'
       : '<span class="note">—</span>';
     const conc = u.papel === 'aluno' ? (u.concluidos.length ? u.concluidos.join(', ') + ' (' + u.concluidos.length + '/10)' : 'nenhum ainda') : '—';
     return '<tr><td>' + esc(u.nome) + '</td><td>' + esc(u.email) + '</td><td>' + PAPEL[u.papel] + '</td><td>' + sel + '</td><td>' + conc + '</td></tr>';
@@ -479,6 +496,18 @@ document.addEventListener('click', async ev => {
   if (!el) return;
   const a = el.dataset.act;
   if (a === 'sair') { await api('/api/logout', { method: 'POST' }).catch(() => {}); S.me = null; S.discipulador = null; S.prog = {}; S.progOk = false; S.caps = {}; S.discipulos = []; location.hash = '#login'; route(false); return; }
+  if (a === 'aviso-ok') { await api('/api/avisos/' + el.dataset.id + '/lido', { method: 'POST' }).catch(() => {}); return route(true); }
+  if (a === 'designar') {
+    const sel = document.getElementById('sel-' + el.dataset.id);
+    const nomeAluno = (S.usuarios.find(x => x.id === el.dataset.id) || {}).nome || 'este discípulo';
+    const opcao = sel && sel.selectedOptions[0] ? sel.selectedOptions[0].textContent : '';
+    const discId = sel ? sel.value : '';
+    const msg = discId ? 'Designar ' + opcao + ' para acompanhar ' + nomeAluno + '?' : 'Remover o discipulador de ' + nomeAluno + '?';
+    if (!confirm(msg)) return;
+    try { await api('/api/admin/atribuir', { method: 'POST', body: { alunoId: el.dataset.id, discipuladorId: discId || null } }); toast('Designação salva'); }
+    catch (e) { toast('Não foi possível salvar: ' + e.message); }
+    return route(true);
+  }
   if (a === 'modo') { S.modo = el.dataset.v; try { localStorage.setItem('modo', S.modo); } catch (e) {} location.hash = '#home'; return route(false); }
   if (a === 'ativar') {
     const cod = (document.getElementById('codAcesso') || {}).value || '';

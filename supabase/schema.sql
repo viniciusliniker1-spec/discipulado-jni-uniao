@@ -273,3 +273,60 @@ revoke all on function public.status_conclusao() from public, anon;
 grant execute on function public.status_conclusao() to authenticated;
 revoke all on function public.ativar_acesso(text) from public, anon;
 grant execute on function public.ativar_acesso(text) to authenticated;
+
+-- =====================================================================
+-- Avisos e designação do discipulador (pelo ADM)
+-- =====================================================================
+create table if not exists public.avisos (
+  id bigint generated always as identity primary key,
+  destinatario_id uuid not null references public.perfis(id) on delete cascade,
+  texto text not null,
+  criado_em timestamptz not null default now(),
+  lido boolean not null default false
+);
+alter table public.avisos enable row level security;
+create policy avisos_proprios on public.avisos for select to authenticated using (destinatario_id = auth.uid());
+create policy avisos_marcar on public.avisos for update to authenticated
+  using (destinatario_id = auth.uid()) with check (destinatario_id = auth.uid());
+revoke all on public.avisos from anon;
+grant select on public.avisos to authenticated;
+grant update (lido) on public.avisos to authenticated;
+
+-- designa (ou troca / remove) o discipulador de um discípulo; cria os avisos
+create or replace function public.designar_discipulador(p_aluno uuid, p_disc uuid) returns void
+language plpgsql security definer set search_path = public as $$
+declare
+  nome_aluno text; nome_disc text; anterior uuid;
+begin
+  if not public.eh_admin() then raise exception 'Somente o administrador.'; end if;
+  select nome into nome_aluno from perfis where id = p_aluno and papel = 'aluno';
+  if nome_aluno is null then raise exception 'Discípulo inválido.'; end if;
+  select discipulador_id into anterior from designacoes where aluno_id = p_aluno;
+
+  if p_disc is null then
+    delete from designacoes where aluno_id = p_aluno;
+    if anterior is not null then
+      insert into avisos (destinatario_id, texto) values
+        (anterior, 'Você não acompanha mais ' || nome_aluno || '.'),
+        (p_aluno, 'Seu discipulador foi removido. A liderança vai indicar outro.');
+    end if;
+    return;
+  end if;
+
+  select nome into nome_disc from perfis where id = p_disc and papel = 'discipulador';
+  if nome_disc is null then raise exception 'Discipulador inválido.'; end if;
+
+  insert into designacoes (aluno_id, discipulador_id) values (p_aluno, p_disc)
+    on conflict (aluno_id) do update set discipulador_id = excluded.discipulador_id;
+
+  if anterior is not null and anterior <> p_disc then
+    insert into avisos (destinatario_id, texto) values
+      (anterior, 'Você não acompanha mais ' || nome_aluno || '.');
+  end if;
+  insert into avisos (destinatario_id, texto) values
+    (p_disc, 'Você foi designado para acompanhar ' || nome_aluno || '. O progresso aparece na sua tela inicial.'),
+    (p_aluno, nome_disc || ' é agora seu discipulador.');
+end $$;
+
+revoke all on function public.designar_discipulador(uuid, uuid) from public, anon;
+grant execute on function public.designar_discipulador(uuid, uuid) to authenticated;
