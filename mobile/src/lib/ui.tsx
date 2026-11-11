@@ -45,7 +45,7 @@ export function Barra({ valor, total }: { valor: number; total: number }) {
   const pct = total ? Math.min(100, Math.round((valor / total) * 100)) : 0;
   return (
     <View>
-      <View style={estilos.barra}><View style={[estilos.barraCheia, { width: pct + '%' }]} /></View>
+      <View style={estilos.barra}><View style={[estilos.barraCheia, { width: (pct + '%') as any }]} /></View>
       <Text style={estilos.nota}>{valor}/{total} encontros</Text>
     </View>
   );
